@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#0A0A0F"/>
+<title>Ajustes — QueHayHoy BRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.263.1/font/lucide.css"/>
+<link rel="stylesheet" href="../css/main.css"/>
+<style>
+/* ── Settings-specific styles ── */
+.settings-hero{background:var(--bg-card);border-bottom:1px solid var(--borde);padding:1rem 1.25rem 0.75rem;position:sticky;top:0;z-index:50;}
+.settings-search{display:flex;align-items:center;gap:0.6rem;background:var(--bg-input);border:1.5px solid var(--borde);border-radius:12px;padding:0.6rem 0.9rem;}
+.settings-search input{flex:1;background:none;border:none;outline:none;color:var(--texto);font-size:0.9rem;font-family:inherit;}
+.settings-search input::placeholder{color:var(--gris2);}
+
+.section-label{font-size:0.72rem;font-weight:700;color:var(--gris2);letter-spacing:.08em;text-transform:uppercase;padding:1.25rem 1.25rem 0.4rem;}
+
+.settings-item{display:flex;align-items:center;gap:0.9rem;padding:0.85rem 1.25rem;cursor:pointer;transition:background .15s;border-bottom:1px solid rgba(255,255,255,.04);}
+.settings-item:hover{background:rgba(255,255,255,.04);}
+.settings-item:active{background:rgba(255,255,255,.08);}
+.s-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem;}
+.s-icon i{font-size:1rem;}
+.s-label{flex:1;min-width:0;}
+.s-label span{display:block;font-size:0.9rem;font-weight:600;color:var(--texto);}
+.s-label small{font-size:0.75rem;color:var(--gris2);margin-top:.1rem;display:block;}
+.s-chevron{color:var(--gris2);font-size:0.8rem;}
+
+/* Color variants for icons */
+.ic-blue{background:rgba(99,102,241,.15);color:#6366F1;}
+.ic-pink{background:rgba(236,72,153,.15);color:#EC4899;}
+.ic-green{background:rgba(34,197,94,.15);color:#22C55E;}
+.ic-red{background:rgba(239,68,68,.15);color:#EF4444;}
+.ic-orange{background:rgba(249,115,22,.15);color:#F97316;}
+.ic-purple{background:rgba(168,85,247,.15);color:#A855F7;}
+.ic-cyan{background:rgba(6,182,212,.15);color:#06B6D4;}
+.ic-yellow{background:rgba(234,179,8,.15);color:#EAB308;}
+.ic-teal{background:rgba(20,184,166,.15);color:#14B8A6;}
+.ic-gray{background:rgba(107,114,128,.15);color:#6B7280;}
+
+/* ── Panel / sub-page ── */
+.settings-panel{position:fixed;inset:0;background:var(--bg-base);z-index:200;overflow-y:auto;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);}
+.settings-panel.open{transform:translateX(0);}
+.panel-header{display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;background:var(--bg-card);border-bottom:1px solid var(--borde);position:sticky;top:0;z-index:10;}
+.panel-header button{background:none;border:none;cursor:pointer;color:var(--texto);font-size:1.2rem;display:flex;align-items:center;}
+.panel-title{font-size:1rem;font-weight:700;color:var(--texto);}
+
+/* Toggle switch */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.04);}
+.toggle-row-info{flex:1;min-width:0;margin-right:1rem;}
+.toggle-row-info span{display:block;font-size:.88rem;font-weight:600;color:var(--texto);}
+.toggle-row-info small{font-size:.75rem;color:var(--gris2);}
+.sw{position:relative;width:44px;height:24px;flex-shrink:0;}
+.sw input{opacity:0;width:0;height:0;}
+.sw-track{position:absolute;inset:0;background:var(--borde);border-radius:24px;transition:.2s;cursor:pointer;}
+.sw input:checked+.sw-track{background:var(--primary);}
+.sw-track::before{content:'';position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;}
+.sw input:checked+.sw-track::before{transform:translateX(20px);}
+
+/* Select row */
+.select-row{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.04);}
+.select-row span{font-size:.88rem;font-weight:600;color:var(--texto);}
+.select-row select{background:var(--bg-input);border:1.5px solid var(--borde);border-radius:8px;color:var(--texto);font-size:.82rem;padding:.35rem .6rem;font-family:inherit;cursor:pointer;}
+
+/* Input row */
+.input-row{padding:.75rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.04);}
+.input-row label{font-size:.75rem;font-weight:600;color:var(--gris2);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.4rem;}
+.input-row input,.input-row textarea{width:100%;background:var(--bg-input);border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:.88rem;padding:.65rem .9rem;font-family:inherit;outline:none;transition:border-color .15s;box-sizing:border-box;}
+.input-row input:focus,.input-row textarea:focus{border-color:var(--primary);}
+.input-row textarea{resize:vertical;min-height:80px;}
+
+/* Color picker row */
+.color-row{padding:.75rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.04);}
+.color-row label{font-size:.75rem;font-weight:600;color:var(--gris2);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.6rem;}
+.color-swatches{display:flex;gap:.5rem;flex-wrap:wrap;}
+.swatch{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:.15s;}
+.swatch.active,.swatch:hover{border-color:#fff;transform:scale(1.12);}
+
+/* Danger zone */
+.danger-item{display:flex;align-items:center;gap:.9rem;padding:.85rem 1.25rem;cursor:pointer;border-bottom:1px solid rgba(239,68,68,.1);}
+.danger-item:hover{background:rgba(239,68,68,.06);}
+.danger-item span{font-size:.9rem;font-weight:600;color:#EF4444;}
+
+/* Session card */
+.session-card{background:var(--bg-card);border:1px solid var(--borde);border-radius:12px;padding:.85rem;margin:.5rem 1.25rem;display:flex;align-items:center;gap:.75rem;}
+.session-icon{width:36px;height:36px;background:rgba(99,102,241,.12);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.session-info{flex:1;min-width:0;}
+.session-info strong{display:block;font-size:.85rem;font-weight:700;color:var(--texto);}
+.session-info small{font-size:.72rem;color:var(--gris2);}
+.session-card .badge-current{font-size:.65rem;font-weight:700;background:rgba(34,197,94,.15);color:#22C55E;padding:.15rem .4rem;border-radius:4px;}
+.btn-revoke{background:rgba(239,68,68,.12);border:none;color:#EF4444;font-size:.75rem;font-weight:600;padding:.35rem .7rem;border-radius:7px;cursor:pointer;font-family:inherit;white-space:nowrap;}
+
+/* Chip select */
+.chip-group{display:flex;gap:.5rem;flex-wrap:wrap;padding:.5rem 1.25rem .75rem;}
+.chip-opt{padding:.4rem .85rem;border-radius:20px;border:1.5px solid var(--borde);background:transparent;color:var(--gris2);font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s;}
+.chip-opt.active{border-color:var(--primary);background:rgba(99,102,241,.15);color:var(--primary);}
+
+/* Info block */
+.info-block{background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:12px;padding:.85rem 1rem;margin:.5rem 1.25rem;font-size:.8rem;color:var(--gris);line-height:1.5;}
+
+/* Avatar preview */
+.avatar-preview{display:flex;flex-direction:column;align-items:center;padding:1.25rem;gap:.75rem;}
+.avatar-ring{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));padding:3px;}
+.avatar-ring img,.avatar-inner{width:100%;height:100%;border-radius:50%;object-fit:cover;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-size:2rem;}
+.btn-avatar{background:var(--bg-input);border:1.5px solid var(--borde);color:var(--texto);font-size:.82rem;font-weight:600;padding:.5rem 1.1rem;border-radius:9px;cursor:pointer;font-family:inherit;}
+
+/* Confirm dialog */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:flex-end;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;}
+.confirm-overlay.show{opacity:1;pointer-events:all;}
+.confirm-box{background:var(--bg-card);border:1px solid var(--borde);border-radius:20px;padding:1.5rem;width:100%;max-width:420px;}
+.confirm-box h3{font-size:1rem;font-weight:700;margin-bottom:.5rem;}
+.confirm-box p{font-size:.85rem;color:var(--gris);margin-bottom:1.2rem;line-height:1.5;}
+.confirm-btns{display:flex;gap:.75rem;}
+.confirm-btns button{flex:1;padding:.75rem;border-radius:12px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit;border:none;}
+.btn-cancel-c{background:var(--bg-input);color:var(--texto);}
+.btn-danger-c{background:#EF4444;color:#fff;}
+.btn-primary-c{background:var(--primary);color:#fff;}
+
+/* Progress bar (wellbeing) */
+.usage-bar{background:var(--bg-input);border-radius:8px;height:8px;margin:.25rem 0 .15rem;overflow:hidden;}
+.usage-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--primary),var(--secondary));transition:width .5s;}
+
+/* Search highlight */
+.highlight{background:rgba(99,102,241,.25);border-radius:3px;padding:0 2px;}
+
+/* App permission row */
+.perm-row{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.04);}
+.perm-row-info strong{font-size:.88rem;font-weight:600;color:var(--texto);display:block;}
+.perm-row-info small{font-size:.74rem;color:var(--gris2);}
+.btn-revoke-perm{background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.3);color:#EF4444;font-size:.75rem;font-weight:600;padding:.3rem .65rem;border-radius:7px;cursor:pointer;font-family:inherit;}
+
+/* Storage bar */
+.storage-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1.25rem;}
+.storage-item span{font-size:.85rem;color:var(--texto);}
+.storage-item small{font-size:.78rem;color:var(--gris2);}
+</style>
+</head>
+<body>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+
+<!-- ── MAIN SETTINGS LIST ── -->
+<div id="main-settings">
+  <div class="settings-hero">
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem;">
+      <button onclick="history.back()" style="background:none;border:none;color:var(--texto);cursor:pointer;display:flex;align-items:center;"><i class="lucide-arrow-left" style="font-size:1.3rem;"></i></button>
+      <h1 style="font-size:1.1rem;font-weight:800;margin:0;">Ajustes</h1>
+    </div>
+    <div class="settings-search">
+      <i class="lucide-search" style="color:var(--gris2);font-size:1rem;"></i>
+      <input type="text" id="settings-search-input" placeholder="Buscar en ajustes…" oninput="searchSettings(this.value)" autocomplete="off"/>
+      <button id="search-clear" onclick="clearSearch()" style="display:none;background:none;border:none;color:var(--gris2);cursor:pointer;"><i class="lucide-x" style="font-size:.9rem;"></i></button>
+    </div>
+  </div>
+
+  <!-- Search results container -->
+  <div id="search-results" style="display:none;"></div>
+
+  <!-- Normal list -->
+  <div id="settings-list">
+    <div class="section-label">Cuenta</div>
+    <div class="settings-item" onclick="openPanel('cuenta')">
+      <div class="s-icon ic-blue"><i class="lucide-user"></i></div>
+      <div class="s-label"><span>Mi cuenta y perfil</span><small>Nombre, foto, bio, email, teléfono</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+    <div class="settings-item" onclick="openPanel('apariencia')">
+      <div class="s-icon ic-purple"><i class="lucide-palette"></i></div>
+      <div class="s-label"><span>Apariencia y personalización</span><small>Tema, colores, tipografía, idioma</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+
+    <div class="section-label">Privacidad y seguridad</div>
+    <div class="settings-item" onclick="openPanel('privacidad')">
+      <div class="s-icon ic-green"><i class="lucide-eye-off"></i></div>
+      <div class="s-label"><span>Privacidad</span><small>Quién puede verte, seguidores, menciones</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+    <div class="settings-item" onclick="openPanel('seguridad')">
+      <div class="s-icon ic-orange"><i class="lucide-shield-check"></i></div>
+      <div class="s-label"><span>Seguridad de la cuenta</span><small>Contraseña, 2FA, sesiones activas</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+
+    <div class="section-label">Comunicación</div>
+    <div class="settings-item" onclick="openPanel('notificaciones')">
+      <div class="s-icon ic-yellow"><i class="lucide-bell"></i></div>
+      <div class="s-label"><span>Notificaciones</span><small>Push, email, sonidos, horas tranquilas</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+    <div class="settings-item" onclick="openPanel('mensajes')">
+      <div class="s-icon ic-cyan"><i class="lucide-message-circle"></i></div>
+      <div class="s-label"><span>Mensajes y comunicación</span><small>Quién puede escribirte, confirmación de lectura</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+
+    <div class="section-label">Contenido</div>
+    <div class="settings-item" onclick="openPanel('publicaciones')">
+      <div class="s-icon ic-pink"><i class="lucide-file-text"></i></div>
+      <div class="s-label"><span>Publicaciones y contenido</span><small>Audiencia, comentarios, borradores, archivo</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+    <div class="settings-item" onclick="openPanel('publicidad')">
+      <div class="s-icon ic-teal"><i class="lucide-megaphone"></i></div>
+      <div class="s-label"><span>Publicidad y preferencias</span><small>Categorías, personalización, datos</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+
+    <div class="section-label">Dispositivo</div>
+    <div class="settings-item" onclick="openPanel('datos')">
+      <div class="s-icon ic-blue"><i class="lucide-hard-drive"></i></div>
+      <div class="s-label"><span>Almacenamiento y datos</span><small>Caché, calidad, uso de datos móviles</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+    <div class="settings-item" onclick="openPanel('bienestar')">
+      <div class="s-icon ic-green"><i class="lucide-heart-pulse"></i></div>
+      <div class="s-label"><span>Bienestar digital</span><small>Tiempo de uso, límites, pausas</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+    <div class="settings-item" onclick="openPanel('accesibilidad')">
+      <div class="s-icon ic-purple"><i class="lucide-accessibility"></i></div>
+      <div class="s-label"><span>Accesibilidad</span><small>Tamaño de texto, contraste, subtítulos</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+    <div class="settings-item" onclick="openPanel('permisos')">
+      <div class="s-icon ic-orange"><i class="lucide-plug"></i></div>
+      <div class="s-label"><span>Aplicaciones conectadas</span><small>Permisos, integraciones externas</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+
+    <div class="section-label">Soporte</div>
+    <div class="settings-item" onclick="openPanel('ayuda')">
+      <div class="s-icon ic-cyan"><i class="lucide-help-circle"></i></div>
+      <div class="s-label"><span>Centro de ayuda y soporte</span><small>FAQ, reportar, términos, versión</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+
+    <div class="section-label">Cuenta</div>
+    <div class="settings-item" onclick="openPanel('administracion')">
+      <div class="s-icon ic-gray"><i class="lucide-settings-2"></i></div>
+      <div class="s-label"><span>Administración de la cuenta</span><small>Cerrar sesión, desactivar, eliminar</small></div>
+      <i class="lucide-chevron-right s-chevron"></i>
+    </div>
+
+    <div style="height:2rem;"></div>
+    <div style="text-align:center;padding:.5rem 1.25rem 2rem;color:var(--gris2);font-size:.75rem;">
+      QueHayHoy BRO v4.0 · <span id="app-version-txt">Cargando…</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PANELS
+════════════════════════════════════════ -->
+
+<!-- 1. MI CUENTA Y PERFIL -->
+<div class="settings-panel" id="panel-cuenta">
+  <div class="panel-header">
+    <button onclick="closePanel('cuenta')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Mi cuenta y perfil</span>
+  </div>
+
+  <div class="avatar-preview">
+    <div class="avatar-ring"><div class="avatar-inner" id="avatar-preview-inner">👤</div></div>
+    <button class="btn-avatar" onclick="changeAvatar()"><i class="lucide-camera"></i> Cambiar foto</button>
+    <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="handleAvatarChange(this)"/>
+  </div>
+
+  <div class="input-row">
+    <label>Nombre completo</label>
+    <input type="text" id="pf-name" placeholder="Tu nombre completo" autocomplete="name"/>
+  </div>
+  <div class="input-row">
+    <label>Nombre de usuario</label>
+    <input type="text" id="pf-username" placeholder="@usuario" autocomplete="username"/>
+  </div>
+  <div class="input-row">
+    <label>Biografía</label>
+    <textarea id="pf-bio" placeholder="Cuéntanos sobre ti…" maxlength="160"></textarea>
+  </div>
+  <div class="input-row">
+    <label>Fecha de nacimiento</label>
+    <input type="date" id="pf-dob"/>
+  </div>
+  <div class="input-row">
+    <label>Correo electrónico</label>
+    <input type="email" id="pf-email" placeholder="tu@email.com" autocomplete="email"/>
+  </div>
+  <div class="input-row">
+    <label>Teléfono</label>
+    <input type="tel" id="pf-phone" placeholder="+1 (809) 000-0000" autocomplete="tel"/>
+  </div>
+  <div class="input-row">
+    <label>Ubicación</label>
+    <input type="text" id="pf-location" placeholder="Santo Domingo, RD"/>
+  </div>
+  <div class="select-row">
+    <span>Género</span>
+    <select id="pf-gender">
+      <option value="">Prefiero no decir</option>
+      <option value="M">Masculino</option>
+      <option value="F">Femenino</option>
+      <option value="NB">No binario</option>
+    </select>
+  </div>
+  <div class="input-row">
+    <label>Enlace externo</label>
+    <input type="url" id="pf-website" placeholder="https://tusitio.com"/>
+  </div>
+
+  <div class="section-label">Categoría de cuenta</div>
+  <div class="chip-group" id="account-category-chips">
+    <button class="chip-opt active" data-val="personal" onclick="selectChip('account-category-chips',this,'account_category')">Personal</button>
+    <button class="chip-opt" data-val="business" onclick="selectChip('account-category-chips',this,'account_category')">Negocio</button>
+    <button class="chip-opt" data-val="creator" onclick="selectChip('account-category-chips',this,'account_category')">Creador</button>
+    <button class="chip-opt" data-val="guide" onclick="selectChip('account-category-chips',this,'account_category')">Guía turístico</button>
+  </div>
+
+  <div style="padding:1rem 1.25rem;">
+    <button class="btn btn-primary btn-full" onclick="saveProfile()">Guardar cambios</button>
+  </div>
+
+  <div class="section-label">Seguridad de la cuenta</div>
+  <div class="settings-item" onclick="openPanel('cambiar-password')">
+    <div class="s-icon ic-orange"><i class="lucide-key"></i></div>
+    <div class="s-label"><span>Cambiar contraseña</span></div>
+    <i class="lucide-chevron-right s-chevron"></i>
+  </div>
+
+  <div class="section-label">Datos</div>
+  <div class="settings-item" onclick="requestDataExport()">
+    <div class="s-icon ic-blue"><i class="lucide-download"></i></div>
+    <div class="s-label"><span>Descargar mis datos</span><small>Recibirás un archivo con toda tu información</small></div>
+    <i class="lucide-chevron-right s-chevron"></i>
+  </div>
+  <div class="danger-item" onclick="confirmDeactivate()">
+    <div class="s-icon ic-yellow"><i class="lucide-pause-circle"></i></div>
+    <span>Desactivar cuenta temporalmente</span>
+  </div>
+  <div class="danger-item" onclick="confirmDelete()">
+    <div class="s-icon ic-red"><i class="lucide-trash-2"></i></div>
+    <span>Eliminar cuenta permanentemente</span>
+  </div>
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- 2. APARIENCIA -->
+<div class="settings-panel" id="panel-apariencia">
+  <div class="panel-header">
+    <button onclick="closePanel('apariencia')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Apariencia y personalización</span>
+  </div>
+
+  <div class="section-label">Tema</div>
+  <div class="chip-group" id="theme-chips">
+    <button class="chip-opt" data-val="dark" onclick="selectChip('theme-chips',this,'theme');Theme.set('dark')">🌙 Oscuro</button>
+    <button class="chip-opt" data-val="light" onclick="selectChip('theme-chips',this,'theme');Theme.set('light')">☀️ Claro</button>
+    <button class="chip-opt" data-val="auto" onclick="selectChip('theme-chips',this,'theme');Theme.set('auto')">🌗 Auto</button>
+  </div>
+
+  <div class="section-label">Color de acento</div>
+  <div class="color-row">
+    <label>Elige tu color principal</label>
+    <div class="color-swatches" id="accent-swatches">
+      <div class="swatch active" style="background:#6366F1" data-color="#6366F1" onclick="setAccent('#6366F1',this)" title="Índigo"></div>
+      <div class="swatch" style="background:#EC4899" data-color="#EC4899" onclick="setAccent('#EC4899',this)" title="Rosa"></div>
+      <div class="swatch" style="background:#06B6D4" data-color="#06B6D4" onclick="setAccent('#06B6D4',this)" title="Cyan"></div>
+      <div class="swatch" style="background:#22C55E" data-color="#22C55E" onclick="setAccent('#22C55E',this)" title="Verde"></div>
+      <div class="swatch" style="background:#F97316" data-color="#F97316" onclick="setAccent('#F97316',this)" title="Naranja"></div>
+      <div class="swatch" style="background:#A855F7" data-color="#A855F7" onclick="setAccent('#A855F7',this)" title="Violeta"></div>
+      <div class="swatch" style="background:#EAB308" data-color="#EAB308" onclick="setAccent('#EAB308',this)" title="Amarillo"></div>
+      <div class="swatch" style="background:#EF4444" data-color="#EF4444" onclick="setAccent('#EF4444',this)" title="Rojo"></div>
+    </div>
+  </div>
+
+  <div class="section-label">Texto</div>
+  <div class="select-row">
+    <span>Tamaño de texto</span>
+    <select onchange="Prefs.set('textSize',this.value);Theme.setTextSize(this.value)" id="text-size-sel">
+      <option value="sm">Pequeño</option>
+      <option value="md" selected>Normal</option>
+      <option value="lg">Grande</option>
+      <option value="xl">Muy grande</option>
+    </select>
+  </div>
+
+  <div class="section-label">Idioma y región</div>
+  <div class="select-row">
+    <span>Idioma</span>
+    <select onchange="Prefs.set('language',this.value)" id="lang-sel">
+      <option value="es" selected>Español</option>
+      <option value="en">English</option>
+    </select>
+  </div>
+  <div class="select-row">
+    <span>Región</span>
+    <select onchange="Prefs.set('region',this.value)" id="region-sel">
+      <option value="DO" selected>República Dominicana</option>
+      <option value="US">Estados Unidos</option>
+      <option value="MX">México</option>
+    </select>
+  </div>
+
+  <div class="section-label">Animaciones</div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>Reducir animaciones</span><small>Para personas sensibles al movimiento</small></div>
+    <label class="sw"><input type="checkbox" id="reduce-motion-tog" onchange="Prefs.set('reduceMotion',this.checked)"/><div class="sw-track"></div></label>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>Reducir efectos visuales</span><small>Interfaz más simple y rápida</small></div>
+    <label class="sw"><input type="checkbox" id="reduce-fx-tog" onchange="Prefs.set('reduceFx',this.checked)"/><div class="sw-track"></div></label>
+  </div>
+
+  <div style="padding:1rem 1.25rem;">
+    <button class="btn btn-full" style="background:var(--bg-input);border:1.5px solid var(--borde);color:var(--gris);" onclick="resetAppearance()">Restablecer valores predeterminados</button>
+  </div>
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- 3. PRIVACIDAD -->
+<div class="settings-panel" id="panel-privacidad">
+  <div class="panel-header">
+    <button onclick="closePanel('privacidad')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Privacidad</span>
+  </div>
+
+  <div class="section-label">Visibilidad del perfil</div>
+  <div class="chip-group" id="profile-vis-chips">
+    <button class="chip-opt active" data-val="public" onclick="selectChip('profile-vis-chips',this,'profileVisibility')">🌐 Público</button>
+    <button class="chip-opt" data-val="private" onclick="selectChip('profile-vis-chips',this,'profileVisibility')">🔒 Privado</button>
+  </div>
+
+  <div class="section-label">Quién puede ver mis publicaciones</div>
+  <div class="select-row">
+    <span>Publicaciones</span>
+    <select onchange="Prefs.set('postsAudience',this.value)" id="posts-aud-sel">
+      <option value="public">Todos</option>
+      <option value="followers">Solo seguidores</option>
+      <option value="close">Amigos cercanos</option>
+      <option value="none">Nadie</option>
+    </select>
+  </div>
+  <div class="select-row">
+    <span>Historias</span>
+    <select onchange="Prefs.set('storiesAudience',this.value)" id="stories-aud-sel">
+      <option value="public">Todos</option>
+      <option value="followers">Solo seguidores</option>
+      <option value="close">Amigos cercanos</option>
+      <option value="none">Nadie</option>
+    </select>
+  </div>
+  <div class="select-row">
+    <span>Videos</span>
+    <select onchange="Prefs.set('videosAudience',this.value)" id="videos-aud-sel">
+      <option value="public">Todos</option>
+      <option value="followers">Solo seguidores</option>
+    </select>
+  </div>
+
+  <div class="section-label">Interacciones</div>
+  <div class="select-row">
+    <span>Comentarios</span>
+    <select onchange="Prefs.set('allowComments',this.value)" id="comments-sel">
+      <option value="all">Todos</option>
+      <option value="followers">Seguidores</option>
+      <option value="following">Que sigo</option>
+      <option value="none">Nadie</option>
+    </select>
+  </div>
+  <div class="select-row">
+    <span>Mensajes directos</span>
+    <select onchange="Prefs.set('allowMessages',this.value)" id="msgs-sel">
+      <option value="all">Todos</option>
+      <option value="followers">Seguidores</option>
+      <option value="none">Nadie</option>
+    </select>
+  </div>
+  <div class="select-row">
+    <span>Menciones y etiquetas</span>
+    <select onchange="Prefs.set('allowMentions',this.value)" id="mentions-sel">
+      <option value="all">Todos</option>
+      <option value="followers">Seguidores</option>
+      <option value="none">Nadie</option>
+    </select>
+  </div>
+
+  <div class="section-label">Estado en línea</div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>Mostrar estado en línea</span><small>Otros pueden ver cuándo estás activo</small></div>
+    <label class="sw"><input type="checkbox" id="online-status-tog" onchange="Prefs.set('showOnlineStatus',this.checked)" checked/><div class="sw-track"></div></label>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>Mostrar última vez en línea</span></div>
+    <label class="sw"><input type="checkbox" id="last-seen-tog" onchange="Prefs.set('showLastSeen',this.checked)" checked/><div class="sw-track"></div></label>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>Mostrar confirmación de lectura</span></div>
+    <label class="sw"><input type="checkbox" id="read-receipts-tog" onchange="Prefs.set('readReceipts',this.checked)" checked/><div class="sw-track"></div></label>
+  </div>
+
+  <div class="section-label">Descubribilidad</div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>Aparecer en búsquedas</span><small>Tu perfil puede encontrarse por nombre o usuario</small></div>
+    <label class="sw"><input type="checkbox" id="searchable-tog" onchange="Prefs.set('searchable',this.checked)" checked/><div class="sw-track"></div></label>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>Indexar en buscadores externos</span><small>Google, Bing, etc.</small></div>
+    <label class="sw"><input type="checkbox" id="index-tog" onchange="Prefs.set('externalIndex',this.checked)"/><div class="sw-track"></div></label>
+  </div>
+
+  <div class="section-label">Usuarios bloqueados y restringidos</div>
+  <div class="settings-item" onclick="openPanel('bloqueados')">
+    <div class="s-icon ic-red"><i class="lucide-user-x"></i></div>
+    <div class="s-label"><span>Lista de bloqueados</span><small id="blocked-count-lbl">Cargando…</small></div>
+    <i class="lucide-chevron-right s-chevron"></i>
+  </div>
+  <div class="settings-item" onclick="openPanel('restringidos')">
+    <div class="s-icon ic-orange"><i class="lucide-user-minus"></i></div>
+    <div class="s-label"><span>Usuarios restringidos</span></div>
+    <i class="lucide-chevron-right s-chevron"></i>
+  </div>
+
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- 4. SEGURIDAD -->
+<div class="settings-panel" id="panel-seguridad">
+  <div class="panel-header">
+    <button onclick="closePanel('seguridad')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Seguridad de la cuenta</span>
+  </div>
+
+  <div class="section-label">Contraseña</div>
+  <div class="settings-item" onclick="openPanel('cambiar-password')">
+    <div class="s-icon ic-orange"><i class="lucide-key"></i></div>
+    <div class="s-label"><span>Cambiar contraseña</span></div>
+    <i class="lucide-chevron-right s-chevron"></i>
+  </div>
+
+  <div class="section-label">Autenticación de dos factores</div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>Activar 2FA</span><small>Añade una capa extra de seguridad</small></div>
+    <label class="sw"><input type="checkbox" id="twofa-tog" onchange="toggle2FA(this.checked)"/><div class="sw-track"></div></label>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>SMS de verificación</span></div>
+    <label class="sw"><input type="checkbox" id="sms-verify-tog" onchange="Prefs.set('smsVerify',this.checked)"/><div class="sw-track"></div></label>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>App autenticadora</span><small>Google Authenticator, Authy, etc.</small></div>
+    <label class="sw"><input type="checkbox" id="totp-tog" onchange="toggleTOTP(this.checked)"/><div class="sw-track"></div></label>
+  </div>
+
+  <div class="section-label">Sesiones activas</div>
+  <div class="info-block">Estas son las sesiones con acceso activo a tu cuenta. Si ves una que no reconoces, ciérrala inmediatamente.</div>
+  <div id="sessions-list"><div style="padding:1rem 1.25rem;color:var(--gris2);font-size:.85rem;">Cargando sesiones…</div></div>
+  <div style="padding:.5rem 1.25rem 1rem;">
+    <button class="btn btn-full" style="background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.3);color:#EF4444;" onclick="confirmRevokeAll()">
+      <i class="lucide-log-out"></i> Cerrar todas las otras sesiones
+    </button>
+  </div>
+
+  <div class="section-label">Alertas de seguridad</div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>Alertas de inicio de sesión sospechoso</span></div>
+    <label class="sw"><input type="checkbox" id="login-alert-tog" onchange="Prefs.set('loginAlerts',this.checked)" checked/><div class="sw-track"></div></label>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>Notificar cambios de seguridad</span></div>
+    <label class="sw"><input type="checkbox" id="sec-change-tog" onchange="Prefs.set('securityChangeAlerts',this.checked)" checked/><div class="sw-track"></div></label>
+  </div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>Confirmación para acciones sensibles</span></div>
+    <label class="sw"><input type="checkbox" id="sensitive-confirm-tog" onchange="Prefs.set('sensitiveConfirm',this.checked)" checked/><div class="sw-track"></div></label>
+  </div>
+
+  <div class="section-label">Historial</div>
+  <div class="settings-item" onclick="openPanel('historial-actividad')">
+    <div class="s-icon ic-gray"><i class="lucide-activity"></i></div>
+    <div class="s-label"><span>Historial de actividad</span></div>
+    <i class="lucide-chevron-right s-chevron"></i>
+  </div>
+
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- 5. NOTIFICACIONES -->
+<div class="settings-panel" id="panel-notificaciones">
+  <div class="panel-header">
+    <button onclick="closePanel('notificaciones')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Notificaciones</span>
+  </div>
+
+  <div class="section-label">Control general</div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>Pausar todas las notificaciones</span><small>Suspende todo temporalmente</small></div>
+    <label class="sw"><input type="checkbox" id="pause-all-tog" onchange="Prefs.set('pauseAllNotifs',this.checked)"/><div class="sw-track"></div></label>
+  </div>
+
+  <div class="section-label">Actividad social</div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Me gusta en publicaciones</span></div><label class="sw"><input type="checkbox" id="notif-likes-tog" onchange="Prefs.set('notifLikes',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Comentarios</span></div><label class="sw"><input type="checkbox" id="notif-comments-tog" onchange="Prefs.set('notifComments',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Nuevos seguidores</span></div><label class="sw"><input type="checkbox" id="notif-followers-tog" onchange="Prefs.set('notifFollowers',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Solicitudes de seguimiento</span></div><label class="sw"><input type="checkbox" id="notif-follow-req-tog" onchange="Prefs.set('notifFollowRequests',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Mensajes directos</span></div><label class="sw"><input type="checkbox" id="notif-msgs-tog" onchange="Prefs.set('notifMessages',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Menciones y etiquetas</span></div><label class="sw"><input type="checkbox" id="notif-mentions-tog" onchange="Prefs.set('notifMentions',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Respuestas a comentarios</span></div><label class="sw"><input type="checkbox" id="notif-replies-tog" onchange="Prefs.set('notifReplies',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Transmisiones en vivo</span></div><label class="sw"><input type="checkbox" id="notif-live-tog" onchange="Prefs.set('notifLive',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Publicaciones recomendadas</span></div><label class="sw"><input type="checkbox" id="notif-rec-tog" onchange="Prefs.set('notifRecommended',this.checked)"/><div class="sw-track"></div></label></div>
+
+  <div class="section-label">Sistema</div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Alertas de seguridad</span></div><label class="sw"><input type="checkbox" id="notif-sec-tog" onchange="Prefs.set('notifSecurity',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Notificaciones por email</span></div><label class="sw"><input type="checkbox" id="notif-email-tog" onchange="Prefs.set('notifEmail',this.checked)"/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Notificaciones push</span><small>Requiere permiso del navegador</small></div><label class="sw"><input type="checkbox" id="notif-push-tog" onchange="togglePush(this.checked)"/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Sonidos</span></div><label class="sw"><input type="checkbox" id="notif-sounds-tog" onchange="Prefs.set('notifSounds',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Vibración</span></div><label class="sw"><input type="checkbox" id="notif-vibrate-tog" onchange="Prefs.set('notifVibrate',this.checked)" checked/><div class="sw-track"></div></label></div>
+
+  <div class="section-label">Horas tranquilas</div>
+  <div class="toggle-row">
+    <div class="toggle-row-info"><span>Activar horas tranquilas</span><small>Sin notificaciones en ese horario</small></div>
+    <label class="sw"><input type="checkbox" id="quiet-hours-tog" onchange="Prefs.set('quietHoursEnabled',this.checked)"/><div class="sw-track"></div></label>
+  </div>
+  <div class="select-row"><span>Desde</span><input type="time" id="quiet-start" value="22:00" onchange="Prefs.set('quietHoursStart',this.value)" style="background:var(--bg-input);border:1.5px solid var(--borde);border-radius:8px;color:var(--texto);font-size:.82rem;padding:.35rem .6rem;font-family:inherit;"/></div>
+  <div class="select-row"><span>Hasta</span><input type="time" id="quiet-end" value="08:00" onchange="Prefs.set('quietHoursEnd',this.value)" style="background:var(--bg-input);border:1.5px solid var(--borde);border-radius:8px;color:var(--texto);font-size:.82rem;padding:.35rem .6rem;font-family:inherit;"/></div>
+
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- 6. MENSAJES -->
+<div class="settings-panel" id="panel-mensajes">
+  <div class="panel-header">
+    <button onclick="closePanel('mensajes')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Mensajes y comunicación</span>
+  </div>
+
+  <div class="section-label">Quién puede escribirme</div>
+  <div class="chip-group" id="msg-who-chips">
+    <button class="chip-opt active" data-val="all" onclick="selectChip('msg-who-chips',this,'allowMessages')">Todos</button>
+    <button class="chip-opt" data-val="followers" onclick="selectChip('msg-who-chips',this,'allowMessages')">Seguidores</button>
+    <button class="chip-opt" data-val="following" onclick="selectChip('msg-who-chips',this,'allowMessages')">Que sigo</button>
+    <button class="chip-opt" data-val="none" onclick="selectChip('msg-who-chips',this,'allowMessages')">Nadie</button>
+  </div>
+
+  <div class="section-label">Privacidad en mensajes</div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Confirmación de lectura</span><small>Otros ven cuando lees sus mensajes</small></div><label class="sw"><input type="checkbox" id="msg-read-tog" onchange="Prefs.set('readReceipts',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Indicador de escritura</span><small>"Escribiendo…"</small></div><label class="sw"><input type="checkbox" id="typing-tog" onchange="Prefs.set('typingIndicator',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Mostrar estado activo en mensajes</span></div><label class="sw"><input type="checkbox" id="msg-active-tog" onchange="Prefs.set('messageActivityStatus',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Filtrar mensajes de desconocidos</span><small>Van a solicitudes de mensajes</small></div><label class="sw"><input type="checkbox" id="msg-filter-tog" onchange="Prefs.set('filterUnknownMessages',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Bloquear mensajes de no seguidores</span></div><label class="sw"><input type="checkbox" id="block-nonfollower-tog" onchange="Prefs.set('blockNonFollowerMessages',this.checked)"/><div class="sw-track"></div></label></div>
+
+  <div class="section-label">Respuestas a historias</div>
+  <div class="chip-group" id="story-reply-chips">
+    <button class="chip-opt active" data-val="all" onclick="selectChip('story-reply-chips',this,'storyReplies')">Todos</button>
+    <button class="chip-opt" data-val="following" onclick="selectChip('story-reply-chips',this,'storyReplies')">Que sigo</button>
+    <button class="chip-opt" data-val="none" onclick="selectChip('story-reply-chips',this,'storyReplies')">Nadie</button>
+  </div>
+
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- 7. PUBLICACIONES -->
+<div class="settings-panel" id="panel-publicaciones">
+  <div class="panel-header">
+    <button onclick="closePanel('publicaciones')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Publicaciones y contenido</span>
+  </div>
+
+  <div class="section-label">Audiencia predeterminada</div>
+  <div class="chip-group" id="default-aud-chips">
+    <button class="chip-opt active" data-val="public" onclick="selectChip('default-aud-chips',this,'defaultAudience')">🌐 Público</button>
+    <button class="chip-opt" data-val="followers" onclick="selectChip('default-aud-chips',this,'defaultAudience')">👥 Seguidores</button>
+    <button class="chip-opt" data-val="close" onclick="selectChip('default-aud-chips',this,'defaultAudience')">⭐ Cercanos</button>
+    <button class="chip-opt" data-val="only-me" onclick="selectChip('default-aud-chips',this,'defaultAudience')">🔒 Solo yo</button>
+  </div>
+
+  <div class="section-label">Comentarios</div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Filtrar comentarios ofensivos</span><small>Se ocultan automáticamente</small></div><label class="sw"><input type="checkbox" id="filter-offensive-tog" onchange="Prefs.set('filterOffensiveComments',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Aprobar etiquetas antes de publicar</span></div><label class="sw"><input type="checkbox" id="tag-approval-tog" onchange="Prefs.set('tagApproval',this.checked)"/><div class="sw-track"></div></label></div>
+  <div class="input-row">
+    <label>Palabras ocultas en comentarios</label>
+    <input type="text" id="hidden-words-input" placeholder="Separadas por comas" oninput="saveHiddenWords(this.value)"/>
+  </div>
+
+  <div class="section-label">Video y reproducción</div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Reproducción automática de videos</span></div><label class="sw"><input type="checkbox" id="autoplay-tog" onchange="Prefs.set('autoplayVideos',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="select-row">
+    <span>Calidad de video</span>
+    <select onchange="Prefs.set('videoQuality',this.value)" id="video-quality-sel">
+      <option value="auto" selected>Automática</option>
+      <option value="hd">Alta (HD)</option>
+      <option value="sd">Normal</option>
+      <option value="low">Baja</option>
+    </select>
+  </div>
+
+  <div class="section-label">Archivo y borradores</div>
+  <div class="settings-item" onclick="openPublicationArchive()">
+    <div class="s-icon ic-gray"><i class="lucide-archive"></i></div>
+    <div class="s-label"><span>Archivo de publicaciones</span></div>
+    <i class="lucide-chevron-right s-chevron"></i>
+  </div>
+  <div class="settings-item" onclick="openDrafts()">
+    <div class="s-icon ic-gray"><i class="lucide-file-edit"></i></div>
+    <div class="s-label"><span>Borradores guardados</span></div>
+    <i class="lucide-chevron-right s-chevron"></i>
+  </div>
+
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- 8. PUBLICIDAD -->
+<div class="settings-panel" id="panel-publicidad">
+  <div class="panel-header">
+    <button onclick="closePanel('publicidad')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Publicidad y preferencias comerciales</span>
+  </div>
+
+  <div class="info-block">Controlamos la publicidad que ves para hacerla más relevante. Puedes ajustar estas preferencias en cualquier momento.</div>
+
+  <div class="toggle-row"><div class="toggle-row-info"><span>Personalización de anuncios</span><small>Basada en tu actividad en la app</small></div><label class="sw"><input type="checkbox" id="ad-personalize-tog" onchange="Prefs.set('adPersonalization',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Usar intereses para anuncios</span></div><label class="sw"><input type="checkbox" id="ad-interests-tog" onchange="Prefs.set('adInterests',this.checked)" checked/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Compartir datos con anunciantes</span></div><label class="sw"><input type="checkbox" id="ad-data-share-tog" onchange="Prefs.set('adDataShare',this.checked)"/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Consentimiento de cookies</span></div><label class="sw"><input type="checkbox" id="cookies-tog" onchange="Prefs.set('cookiesConsent',this.checked)" checked/><div class="sw-track"></div></label></div>
+
+  <div class="section-label">Temas de anuncios a evitar</div>
+  <div class="chip-group" id="ad-exclude-chips" style="flex-direction:column;gap:.3rem;">
+    <button class="chip-opt" onclick="toggleAdExclude(this,'alcohol')">🍺 Alcohol</button>
+    <button class="chip-opt" onclick="toggleAdExclude(this,'gambling')">🎲 Apuestas</button>
+    <button class="chip-opt" onclick="toggleAdExclude(this,'politics')">🗳️ Política</button>
+    <button class="chip-opt" onclick="toggleAdExclude(this,'health_products')">💊 Productos de salud</button>
+    <button class="chip-opt" onclick="toggleAdExclude(this,'dating')">💘 Citas y romance</button>
+  </div>
+
+  <div style="padding:1rem 1.25rem;">
+    <button class="btn btn-full" style="background:var(--bg-input);border:1.5px solid var(--borde);color:var(--gris);" onclick="optOutAllAds()">Excluirme de toda personalización</button>
+  </div>
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- 9. DATOS Y ALMACENAMIENTO -->
+<div class="settings-panel" id="panel-datos">
+  <div class="panel-header">
+    <button onclick="closePanel('datos')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Almacenamiento y datos</span>
+  </div>
+
+  <div class="section-label">Uso del almacenamiento</div>
+  <div id="storage-usage-list"><div style="padding:1rem 1.25rem;color:var(--gris2);font-size:.85rem;">Calculando…</div></div>
+
+  <div class="section-label">Datos móviles</div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Ahorro de datos móviles</span><small>Reduce calidad en datos móviles</small></div><label class="sw"><input type="checkbox" id="data-saver-tog" onchange="Prefs.set('dataMode',this.checked)"/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Descargar solo con Wi-Fi</span></div><label class="sw"><input type="checkbox" id="wifi-only-tog" onchange="Prefs.set('wifiOnlyDownloads',this.checked)"/><div class="sw-track"></div></label></div>
+
+  <div class="section-label">Calidad de medios</div>
+  <div class="select-row"><span>Calidad de imágenes</span><select onchange="Prefs.set('imageQuality',this.value)"><option value="auto">Auto</option><option value="hd">Alta</option><option value="sd">Normal</option></select></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Cargar contenido en segundo plano</span></div><label class="sw"><input type="checkbox" id="bg-load-tog" onchange="Prefs.set('backgroundLoad',this.checked)" checked/><div class="sw-track"></div></label></div>
+
+  <div class="section-label">Caché</div>
+  <div style="padding:.5rem 1.25rem 1rem;">
+    <button class="btn btn-full" style="background:var(--bg-input);border:1.5px solid var(--borde);color:var(--texto);" onclick="clearCache()">
+      <i class="lucide-trash-2"></i> Limpiar caché (<span id="cache-size-txt">calculando…</span>)
+    </button>
+  </div>
+
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- 10. BIENESTAR DIGITAL -->
+<div class="settings-panel" id="panel-bienestar">
+  <div class="panel-header">
+    <button onclick="closePanel('bienestar')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Bienestar digital</span>
+  </div>
+
+  <div class="section-label">Tiempo de uso hoy</div>
+  <div style="padding:.75rem 1.25rem 1rem;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:.4rem;">
+      <span style="font-size:.85rem;font-weight:600;color:var(--texto);" id="today-usage-lbl">Cargando…</span>
+      <span style="font-size:.78rem;color:var(--gris2);" id="daily-limit-lbl"></span>
+    </div>
+    <div class="usage-bar"><div class="usage-fill" id="usage-fill" style="width:0%"></div></div>
+    <small style="color:var(--gris2);font-size:.72rem;" id="wellbeing-avg"></small>
+  </div>
+
+  <div class="section-label">Límites diarios</div>
+  <div class="select-row">
+    <span>Límite de uso diario</span>
+    <select id="daily-limit-sel" onchange="setDailyLimit(this.value)">
+      <option value="0">Sin límite</option>
+      <option value="30">30 minutos</option>
+      <option value="60">1 hora</option>
+      <option value="90">1.5 horas</option>
+      <option value="120">2 horas</option>
+    </select>
+  </div>
+
+  <div class="section-label">Recordatorios de descanso</div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Recordatorios de descanso</span></div><label class="sw"><input type="checkbox" id="break-reminder-tog" onchange="Prefs.set('breakReminder',this.checked)"/><div class="sw-track"></div></label></div>
+  <div class="select-row"><span>Intervalo</span><select id="break-interval-sel" onchange="Prefs.set('breakInterval',parseInt(this.value))"><option value="30">30 min</option><option value="60" selected>1 hora</option><option value="90">1.5 horas</option><option value="120">2 horas</option></select></div>
+
+  <div class="section-label">Modo tranquilo</div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Modo tranquilo</span><small>Pausa notificaciones y reduce sugerencias</small></div><label class="sw"><input type="checkbox" id="quiet-mode-tog" onchange="Prefs.set('quietMode',this.checked)"/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Reducir contenido recomendado</span></div><label class="sw"><input type="checkbox" id="reduce-rec-tog" onchange="Prefs.set('reduceRecommended',this.checked)"/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Controles de contenido sensible</span></div><label class="sw"><input type="checkbox" id="sensitive-content-tog" onchange="Prefs.set('sensitiveContentFilter',this.checked)" checked/><div class="sw-track"></div></label></div>
+
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- 11. ACCESIBILIDAD -->
+<div class="settings-panel" id="panel-accesibilidad">
+  <div class="panel-header">
+    <button onclick="closePanel('accesibilidad')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Accesibilidad</span>
+  </div>
+
+  <div class="toggle-row"><div class="toggle-row-info"><span>Texto grande</span><small>Aumenta el tamaño del texto en toda la app</small></div><label class="sw"><input type="checkbox" id="large-text-tog" onchange="setLargeText(this.checked)"/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Alto contraste</span><small>Mejora la visibilidad de elementos</small></div><label class="sw"><input type="checkbox" id="high-contrast-tog" onchange="setHighContrast(this.checked)"/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Reducir movimiento</span><small>Desactiva animaciones y transiciones</small></div><label class="sw"><input type="checkbox" id="a11y-reduce-motion-tog" onchange="Prefs.set('reduceMotion',this.checked)"/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Subtítulos automáticos</span><small>En videos cuando estén disponibles</small></div><label class="sw"><input type="checkbox" id="captions-tog" onchange="Prefs.set('autoCaptions',this.checked)"/><div class="sw-track"></div></label></div>
+  <div class="toggle-row"><div class="toggle-row-info"><span>Compatibilidad con lector de pantalla</span><small>Optimiza para VoiceOver / TalkBack</small></div><label class="sw"><input type="checkbox" id="screen-reader-tog" onchange="Prefs.set('screenReader',this.checked)"/><div class="sw-track"></div></label></div>
+
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- 12. PERMISOS / APPS CONECTADAS -->
+<div class="settings-panel" id="panel-permisos">
+  <div class="panel-header">
+    <button onclick="closePanel('permisos')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Aplicaciones conectadas</span>
+  </div>
+
+  <div class="section-label">Permisos del dispositivo</div>
+  <div id="device-permissions-list">
+    <div class="perm-row">
+      <div class="perm-row-info"><strong>Cámara</strong><small>Para fotos y videos</small></div>
+      <button class="btn-revoke-perm" onclick="requestPermission('camera')">Revisar</button>
+    </div>
+    <div class="perm-row">
+      <div class="perm-row-info"><strong>Micrófono</strong><small>Para audios y notas de voz</small></div>
+      <button class="btn-revoke-perm" onclick="requestPermission('microphone')">Revisar</button>
+    </div>
+    <div class="perm-row">
+      <div class="perm-row-info"><strong>Ubicación</strong><small>Para eventos y lugares cercanos</small></div>
+      <button class="btn-revoke-perm" onclick="requestPermission('geolocation')">Revisar</button>
+    </div>
+    <div class="perm-row">
+      <div class="perm-row-info"><strong>Notificaciones</strong><small>Para alertas y mensajes</small></div>
+      <button class="btn-revoke-perm" onclick="requestPermission('notifications')">Revisar</button>
+    </div>
+  </div>
+
+  <div class="section-label">Aplicaciones externas conectadas</div>
+  <div id="connected-apps-list"><div style="padding:1rem 1.25rem;color:var(--gris2);font-size:.85rem;">Cargando aplicaciones…</div></div>
+
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- 13. AYUDA Y SOPORTE -->
+<div class="settings-panel" id="panel-ayuda">
+  <div class="panel-header">
+    <button onclick="closePanel('ayuda')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Centro de ayuda y soporte</span>
+  </div>
+
+  <div class="section-label">Ayuda</div>
+  <div class="settings-item" onclick="openFAQ()"><div class="s-icon ic-cyan"><i class="lucide-book-open"></i></div><div class="s-label"><span>Preguntas frecuentes</span></div><i class="lucide-chevron-right s-chevron"></i></div>
+  <div class="settings-item" onclick="contactSupport()"><div class="s-icon ic-blue"><i class="lucide-headphones"></i></div><div class="s-label"><span>Contactar soporte</span></div><i class="lucide-chevron-right s-chevron"></i></div>
+  <div class="settings-item" onclick="openReportBug()"><div class="s-icon ic-orange"><i class="lucide-bug"></i></div><div class="s-label"><span>Reportar un error</span></div><i class="lucide-chevron-right s-chevron"></i></div>
+  <div class="settings-item" onclick="Report.openModal('user','')"><div class="s-icon ic-red"><i class="lucide-flag"></i></div><div class="s-label"><span>Reportar un usuario</span></div><i class="lucide-chevron-right s-chevron"></i></div>
+  <div class="settings-item" onclick="Report.openModal('content','')"><div class="s-icon ic-red"><i class="lucide-flag"></i></div><div class="s-label"><span>Reportar contenido</span></div><i class="lucide-chevron-right s-chevron"></i></div>
+  <div class="settings-item" onclick="Report.openModal('security','')"><div class="s-icon ic-red"><i class="lucide-shield-alert"></i></div><div class="s-label"><span>Reportar problema de seguridad</span></div><i class="lucide-chevron-right s-chevron"></i></div>
+
+  <div class="section-label">Legal</div>
+  <div class="settings-item" onclick="openExternalLink('terms')"><div class="s-icon ic-gray"><i class="lucide-file-text"></i></div><div class="s-label"><span>Términos de uso</span></div><i class="lucide-external-link s-chevron"></i></div>
+  <div class="settings-item" onclick="openExternalLink('privacy')"><div class="s-icon ic-gray"><i class="lucide-shield"></i></div><div class="s-label"><span>Política de privacidad</span></div><i class="lucide-external-link s-chevron"></i></div>
+  <div class="settings-item" onclick="openExternalLink('community')"><div class="s-icon ic-gray"><i class="lucide-users"></i></div><div class="s-label"><span>Normas de comunidad</span></div><i class="lucide-external-link s-chevron"></i></div>
+
+  <div class="section-label">Información</div>
+  <div class="toggle-row" style="cursor:default;">
+    <div class="toggle-row-info"><span>Versión de la app</span></div>
+    <small style="color:var(--gris2);">v4.0.0</small>
+  </div>
+  <div class="toggle-row" style="cursor:default;">
+    <div class="toggle-row-info"><span>Estado de solicitudes</span></div>
+    <small id="support-status-txt" style="color:var(--gris2);">Sin solicitudes</small>
+  </div>
+
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- 14. ADMINISTRACIÓN -->
+<div class="settings-panel" id="panel-administracion">
+  <div class="panel-header">
+    <button onclick="closePanel('administracion')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Administración de la cuenta</span>
+  </div>
+
+  <div class="section-label">Sesión</div>
+  <div class="settings-item" onclick="doLogout()"><div class="s-icon ic-gray"><i class="lucide-log-out"></i></div><div class="s-label"><span>Cerrar sesión</span></div></div>
+  <div class="settings-item" onclick="switchAccount()"><div class="s-icon ic-blue"><i class="lucide-repeat-2"></i></div><div class="s-label"><span>Cambiar de cuenta</span></div><i class="lucide-chevron-right s-chevron"></i></div>
+  <div class="settings-item" onclick="addAccount()"><div class="s-icon ic-green"><i class="lucide-user-plus"></i></div><div class="s-label"><span>Agregar otra cuenta</span></div><i class="lucide-chevron-right s-chevron"></i></div>
+
+  <div class="section-label">Datos</div>
+  <div class="settings-item" onclick="requestDataExport()"><div class="s-icon ic-blue"><i class="lucide-download"></i></div><div class="s-label"><span>Descargar mis datos</span><small>Historial, publicaciones, configuraciones</small></div><i class="lucide-chevron-right s-chevron"></i></div>
+
+  <div class="section-label">Estado de la cuenta</div>
+  <div class="danger-item" onclick="confirmDeactivate()"><div class="s-icon ic-yellow"><i class="lucide-pause-circle"></i></div><span>Desactivar cuenta temporalmente</span></div>
+  <div class="danger-item" onclick="confirmDelete()"><div class="s-icon ic-red"><i class="lucide-trash-2"></i></div><span>Eliminar cuenta permanentemente</span></div>
+
+  <div class="info-block" style="margin-top:.5rem;">
+    Al eliminar tu cuenta se borrarán permanentemente todas tus publicaciones, fotos, videos, mensajes y configuraciones. Esta acción <strong>no se puede deshacer</strong>.
+  </div>
+
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- ── CHANGE PASSWORD PANEL ── -->
+<div class="settings-panel" id="panel-cambiar-password">
+  <div class="panel-header">
+    <button onclick="closePanel('cambiar-password')"><i class="lucide-arrow-left"></i></button>
+    <span class="panel-title">Cambiar contraseña</span>
+  </div>
+  <div class="input-row" style="margin-top:.75rem;">
+    <label>Contraseña actual</label>
+    <input type="password" id="pwd-current" placeholder="••••••••" autocomplete="current-password"/>
+  </div>
+  <div class="input-row">
+    <label>Nueva contraseña (mínimo 8 caracteres)</label>
+    <input type="password" id="pwd-new" placeholder="••••••••" autocomplete="new-password"/>
+  </div>
+  <div class="input-row">
+    <label>Confirmar nueva contraseña</label>
+    <input type="password" id="pwd-confirm" placeholder="••••••••" autocomplete="new-password"/>
+  </div>
+  <div style="padding:.75rem 1.25rem 1.5rem;">
+    <button class="btn btn-primary btn-full" onclick="changePassword()">Actualizar contraseña</button>
+  </div>
+  <div class="info-block">Tu contraseña se almacena de forma segura. Nunca la compartimos con terceros.</div>
+  <div style="height:3rem;"></div>
+</div>
+
+<!-- ── CONFIRM DIALOGS ── -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <h3 id="confirm-title">¿Estás seguro?</h3>
+    <p id="confirm-message">Esta acción no se puede deshacer.</p>
+    <div id="confirm-extra"></div>
+    <div class="confirm-btns">
+      <button class="btn-cancel-c" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn-danger-c" id="confirm-action-btn" onclick="executeConfirmAction()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ─── Panel navigation ─── */
+function openPanel(id) {
+  const panel = document.getElementById('panel-' + id);
+  if (!panel) return;
+  panel.classList.add('open');
+  // Load dynamic data when panel opens
+  if (id === 'seguridad') loadSessions();
+  if (id === 'bienestar') loadWellbeing();
+  if (id === 'datos') loadStorageInfo();
+  if (id === 'cuenta') loadProfileData();
+  if (id === 'apariencia') loadAppearanceData();
+  if (id === 'privacidad') loadPrivacyData();
+  if (id === 'notificaciones') loadNotifData();
+  if (id === 'permisos') loadConnectedApps();
+}
+
+function closePanel(id) {
+  document.getElementById('panel-' + id)?.classList.remove('open');
+}
+
+/* ─── Search ─── */
+const SETTINGS_INDEX = [
+  {label:'Nombre completo',panel:'cuenta',keywords:'nombre perfil cuenta'},
+  {label:'Foto de perfil / Avatar',panel:'cuenta',keywords:'foto avatar imagen perfil'},
+  {label:'Biografía',panel:'cuenta',keywords:'bio descripción'},
+  {label:'Email / Correo',panel:'cuenta',keywords:'email correo cuenta'},
+  {label:'Teléfono',panel:'cuenta',keywords:'teléfono celular'},
+  {label:'Contraseña',panel:'cambiar-password',keywords:'contraseña password seguridad'},
+  {label:'Tema oscuro / claro',panel:'apariencia',keywords:'tema oscuro claro dark light'},
+  {label:'Color de acento',panel:'apariencia',keywords:'color acento personalización'},
+  {label:'Idioma',panel:'apariencia',keywords:'idioma lenguaje español inglés'},
+  {label:'Privacidad del perfil',panel:'privacidad',keywords:'privado público perfil'},
+  {label:'Seguidores y seguidos',panel:'privacidad',keywords:'seguidores seguir'},
+  {label:'Quién puede escribirme',panel:'mensajes',keywords:'mensajes escribir comunicación'},
+  {label:'Autenticación dos factores 2FA',panel:'seguridad',keywords:'2fa dos factores seguridad'},
+  {label:'Sesiones activas',panel:'seguridad',keywords:'sesiones dispositivos cerrar sesión'},
+  {label:'Notificaciones push',panel:'notificaciones',keywords:'push notificaciones alertas'},
+  {label:'Horas tranquilas',panel:'notificaciones',keywords:'horas tranquilas silencio'},
+  {label:'Tiempo de uso',panel:'bienestar',keywords:'tiempo uso pantalla bienestar digital'},
+  {label:'Limpiar caché',panel:'datos',keywords:'cache caché limpiar almacenamiento'},
+  {label:'Accesibilidad',panel:'accesibilidad',keywords:'accesibilidad contraste texto grande'},
+  {label:'Cerrar sesión',panel:'administracion',keywords:'cerrar sesión logout salir'},
+  {label:'Eliminar cuenta',panel:'administracion',keywords:'eliminar borrar cuenta'},
+  {label:'Descargar mis datos',panel:'cuenta',keywords:'datos descargar exportar'},
+  {label:'Publicidad',panel:'publicidad',keywords:'publicidad anuncios ads'},
+  {label:'Aplicaciones conectadas',panel:'permisos',keywords:'apps conectadas permisos'},
+  {label:'Reportar bug',panel:'ayuda',keywords:'reportar bug error problema'},
+  {label:'Términos de uso',panel:'ayuda',keywords:'términos condiciones legal'},
+];
+
+let searchTimeout;
+function searchSettings(q) {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => _doSearch(q), 200);
+  document.getElementById('search-clear').style.display = q ? 'flex' : 'none';
+  document.getElementById('settings-list').style.display = q ? 'none' : 'block';
+  document.getElementById('search-results').style.display = q ? 'block' : 'none';
+}
+
+function _doSearch(q) {
+  const lq = q.toLowerCase().trim();
+  const res = document.getElementById('search-results');
+  if (!lq) { res.innerHTML = ''; return; }
+  const matches = SETTINGS_INDEX.filter(item =>
+    item.label.toLowerCase().includes(lq) || item.keywords.includes(lq)
+  );
+  if (!matches.length) {
+    res.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--gris2);">Sin resultados para "' + q + '"</div>';
+    return;
+  }
+  res.innerHTML = '<div class="section-label">Resultados</div>' +
+    matches.map(m => `
+      <div class="settings-item" onclick="openPanel('${m.panel}')">
+        <div class="s-icon ic-blue"><i class="lucide-search"></i></div>
+        <div class="s-label"><span>${m.label.replace(new RegExp(q,'gi'), s => '<mark class="highlight">'+s+'</mark>')}</span></div>
+        <i class="lucide-chevron-right s-chevron"></i>
+      </div>
+    `).join('');
+}
+
+function clearSearch() {
+  document.getElementById('settings-search-input').value = '';
+  searchSettings('');
+}
+
+/* ─── Chip selector ─── */
+function selectChip(groupId, btn, prefKey) {
+  document.querySelectorAll('#' + groupId + ' .chip-opt').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  Prefs.set(prefKey, btn.dataset.val);
+}
+
+/* ─── Accent color ─── */
+function setAccent(color, el) {
+  document.querySelectorAll('#accent-swatches .swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  Theme.setAccent(color);
+  Prefs.set('accentColor', color);
+}
+
+/* ─── Profile ─── */
+function loadProfileData() {
+  try {
+    const user = JSON.parse(localStorage.getItem('qhh_user') || '{}');
+    if (user.full_name) document.getElementById('pf-name').value = user.full_name;
+    if (user.username) document.getElementById('pf-username').value = '@' + user.username.replace('@','');
+    if (user.bio) document.getElementById('pf-bio').value = user.bio;
+    if (user.email) document.getElementById('pf-email').value = user.email;
+  } catch(e) {}
+}
+
+function changeAvatar() {
+  document.getElementById('avatar-input').click();
+}
+
+function handleAvatarChange(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5*1024*1024) return Toast.error('La imagen no puede superar 5MB');
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById('avatar-preview-inner');
+    prev.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = e.target.result;
+    img.style.cssText = 'width:100%;height:100%;border-radius:50%;object-fit:cover;';
+    prev.appendChild(img);
+  };
+  reader.readAsDataURL(file);
+  Toast.info('Guardando foto de perfil…');
+  const formData = new FormData();
+  formData.append('avatar', file);
+  const headers = {};
+  const token = API.auth.getToken();
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  fetch('/api/users/avatar', { method: 'POST', headers, body: formData })
+    .then(r => r.json())
+    .then(data => { if (data.avatar_url) Toast.success('Foto actualizada'); })
+    .catch(() => Toast.error('Error al subir la foto'));
+}
+
+async function saveProfile() {
+  const payload = {
+    full_name: document.getElementById('pf-name').value.trim(),
+    username: document.getElementById('pf-username').value.trim().replace('@',''),
+    bio: document.getElementById('pf-bio').value.trim(),
+    date_of_birth: document.getElementById('pf-dob').value || null,
+    location: document.getElementById('pf-location').value.trim(),
+    website: document.getElementById('pf-website').value.trim() || null,
+    gender: document.getElementById('pf-gender').value || null,
+  };
+  if (!payload.full_name) return Toast.error('El nombre no puede estar vacío');
+  try {
+    await API.request('PATCH', '/api/users/profile', payload);
+    const stored = JSON.parse(localStorage.getItem('qhh_user') || '{}');
+    Object.assign(stored, payload);
+    localStorage.setItem('qhh_user', JSON.stringify(stored));
+    Toast.success('Perfil guardado ✓');
+  } catch(e) { Toast.error(e.message || 'Error al guardar'); }
+}
+
+/* ─── Password ─── */
+async function changePassword() {
+  const current = document.getElementById('pwd-current').value;
+  const newPwd  = document.getElementById('pwd-new').value;
+  const confirm = document.getElementById('pwd-confirm').value;
+  if (!current || !newPwd || !confirm) return Toast.error('Completa todos los campos');
+  if (newPwd.length < 8) return Toast.error('Mínimo 8 caracteres');
+  if (newPwd !== confirm) return Toast.error('Las contraseñas no coinciden');
+  try {
+    await API.request('POST', '/api/auth/change-password', { current_password: current, new_password: newPwd });
+    Toast.success('Contraseña actualizada ✓');
+    document.getElementById('pwd-current').value = '';
+    document.getElementById('pwd-new').value = '';
+    document.getElementById('pwd-confirm').value = '';
+    closePanel('cambiar-password');
+  } catch(e) { Toast.error(e.message || 'Error al cambiar contraseña'); }
+}
+
+/* ─── Appearance ─── */
+function loadAppearanceData() {
+  const theme = Prefs.get('theme');
+  document.querySelectorAll('#theme-chips .chip-opt').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === theme);
+  });
+  const accent = Prefs.get('accentColor');
+  document.querySelectorAll('#accent-swatches .swatch').forEach(s => {
+    s.classList.toggle('active', s.dataset.color === accent);
+  });
+  const ts = Prefs.get('textSize');
+  if (document.getElementById('text-size-sel')) document.getElementById('text-size-sel').value = ts || 'md';
+  const lang = Prefs.get('language');
+  if (document.getElementById('lang-sel')) document.getElementById('lang-sel').value = lang || 'es';
+  _sync('reduce-motion-tog','reduceMotion');
+  _sync('reduce-fx-tog','reduceFx');
+}
+
+function resetAppearance() {
+  Prefs.set('theme','dark'); Theme.set('dark');
+  Prefs.set('accentColor','#6366F1'); Theme.setAccent('#6366F1');
+  Prefs.set('textSize','md'); Theme.setTextSize('md');
+  Prefs.set('language','es');
+  loadAppearanceData();
+  Toast.success('Apariencia restablecida');
+}
+
+/* ─── Privacy ─── */
+function loadPrivacyData() {
+  _sync('online-status-tog','showOnlineStatus',true);
+  _sync('last-seen-tog','showLastSeen',true);
+  _sync('read-receipts-tog','readReceipts',true);
+  _sync('searchable-tog','searchable',true);
+  _sync('index-tog','externalIndex',false);
+  const vis = Prefs.get('profileVisibility') || 'public';
+  document.querySelectorAll('#profile-vis-chips .chip-opt').forEach(b => b.classList.toggle('active', b.dataset.val === vis));
+  // Load blocked count
+  API.request('GET','/api/users/blocked').then(d => {
+    const lbl = document.getElementById('blocked-count-lbl');
+    if (lbl) lbl.textContent = (d.total || 0) + ' usuarios bloqueados';
+  }).catch(()=>{});
+}
+
+/* ─── Notifications ─── */
+function loadNotifData() {
+  ['likes','comments','followers','follow-req','msgs','mentions','replies','live','rec','sec','email','push','sounds','vibrate'].forEach(k => {
+    const el = document.getElementById('notif-' + k + '-tog');
+    if (el) el.checked = Prefs.get('notif' + _camel(k)) !== false;
+  });
+  _sync('pause-all-tog','pauseAllNotifs',false);
+  _sync('quiet-hours-tog','quietHoursEnabled',false);
+  const qs = Prefs.get('quietHoursStart'); if (qs) document.getElementById('quiet-start').value = qs;
+  const qe = Prefs.get('quietHoursEnd'); if (qe) document.getElementById('quiet-end').value = qe;
+}
+
+function _camel(str) { return str.split('-').map((w,i) => i?w[0].toUpperCase()+w.slice(1):w).join(''); }
+
+async function togglePush(enabled) {
+  if (!enabled) { Prefs.set('notifPush', false); return; }
+  if (!('Notification' in window)) return Toast.error('Tu navegador no soporta notificaciones push');
+  const perm = await Notification.requestPermission();
+  if (perm !== 'granted') {
+    Toast.error('Permiso denegado para notificaciones');
+    document.getElementById('notif-push-tog').checked = false;
+    return;
+  }
+  Prefs.set('notifPush', true);
+  Toast.success('Notificaciones activadas ✓');
+}
+
+/* ─── Security / Sessions ─── */
+async function loadSessions() {
+  const list = document.getElementById('sessions-list');
+  try {
+    const data = await API.request('GET', '/api/auth/sessions');
+    const sessions = data.sessions || [];
+    if (!sessions.length) { list.innerHTML = '<div style="padding:1rem 1.25rem;color:var(--gris2);font-size:.85rem;">No hay sesiones activas</div>'; return; }
+    list.innerHTML = sessions.map(s => `
+      <div class="session-card">
+        <div class="session-icon"><i class="lucide-${s.device_type==='mobile'?'smartphone':'monitor'}" style="color:var(--primary);font-size:1.1rem;"></i></div>
+        <div class="session-info">
+          <strong>${s.device_name || 'Dispositivo desconocido'} ${s.is_current ? '<span class="badge-current">Actual</span>' : ''}</strong>
+          <small>${s.location || 'Ubicación desconocida'} · ${_formatDate(s.last_active)}</small>
+        </div>
+        ${!s.is_current ? `<button class="btn-revoke" onclick="revokeSession('${s.id}')">Cerrar</button>` : ''}
+      </div>
+    `).join('');
+  } catch(e) {
+    list.innerHTML = '<div style="padding:1rem 1.25rem;color:var(--gris2);font-size:.85rem;">No se pudieron cargar las sesiones</div>';
+  }
+}
+
+async function revokeSession(sessionId) {
+  try {
+    await API.request('DELETE', '/api/auth/sessions/' + sessionId);
+    Toast.success('Sesión cerrada');
+    loadSessions();
+  } catch(e) { Toast.error('Error al cerrar sesión'); }
+}
+
+function confirmRevokeAll() {
+  showConfirm(
+    'Cerrar todas las sesiones',
+    '¿Estás seguro? Se cerrarán todas las sesiones en otros dispositivos. Tendrás que volver a iniciar sesión en ellos.',
+    async () => {
+      await API.request('DELETE', '/api/auth/sessions');
+      Toast.success('Todas las sesiones cerradas');
+      loadSessions();
+    }
+  );
+}
+
+async function toggle2FA(enabled) {
+  try {
+    await API.request('POST', '/api/auth/2fa/' + (enabled?'enable':'disable'), {});
+    Toast.success('2FA ' + (enabled?'activado':'desactivado'));
+  } catch(e) { Toast.error(e.message || 'Error'); document.getElementById('twofa-tog').checked = !enabled; }
+}
+
+async function toggleTOTP(enabled) {
+  if (!enabled) { Prefs.set('totpEnabled', false); return; }
+  try {
+    const data = await API.request('POST', '/api/auth/totp/setup', {});
+    Toast.info('Configura tu app autenticadora con el código QR enviado a tu email');
+  } catch(e) { Toast.error(e.message || 'Error'); document.getElementById('totp-tog').checked = false; }
+}
+
+/* ─── Wellbeing ─── */
+function loadWellbeing() {
+  if (typeof Wellbeing === 'undefined') return;
+  const todayMin = Wellbeing.getTodayMinutes ? Wellbeing.getTodayMinutes() : 0;
+  const limit = Prefs.get('dailyLimit') || 0;
+  const lbl = document.getElementById('today-usage-lbl');
+  const fillEl = document.getElementById('usage-fill');
+  const limitLbl = document.getElementById('daily-limit-lbl');
+  const avgLbl = document.getElementById('wellbeing-avg');
+  if (lbl) lbl.textContent = _formatMinutes(todayMin) + ' hoy';
+  if (limit > 0) {
+    if (fillEl) fillEl.style.width = Math.min(100, (todayMin/limit)*100) + '%';
+    if (limitLbl) limitLbl.textContent = 'Límite: ' + _formatMinutes(limit);
+  } else {
+    if (fillEl) fillEl.style.width = Math.min(100, (todayMin/120)*100) + '%';
+    if (limitLbl) limitLbl.textContent = 'Sin límite';
+  }
+  if (avgLbl) avgLbl.textContent = 'Promedio semanal: ' + _formatMinutes(Wellbeing.getWeeklyAvg ? Wellbeing.getWeeklyAvg() : 0);
+  const sel = document.getElementById('daily-limit-sel');
+  if (sel) sel.value = String(limit);
+  _sync('break-reminder-tog','breakReminder',false);
+  _sync('quiet-mode-tog','quietMode',false);
+  _sync('reduce-rec-tog','reduceRecommended',false);
+  _sync('sensitive-content-tog','sensitiveContentFilter',true);
+}
+
+function setDailyLimit(val) { Prefs.set('dailyLimit', parseInt(val)); Toast.success(val==='0'?'Límite eliminado':'Límite diario: ' + _formatMinutes(parseInt(val))); }
+
+/* ─── Storage ─── */
+function loadStorageInfo() {
+  const list = document.getElementById('storage-usage-list');
+  // Estimate from localStorage
+  let lsBytes = 0;
+  try { for(let k in localStorage) lsBytes += (localStorage[k]||'').length * 2; } catch(e) {}
+  const cacheBytes = lsBytes;
+  list.innerHTML = [
+    ['Caché de la app', _formatBytes(cacheBytes)],
+    ['Datos de usuario', _formatBytes(lsBytes * 0.3)],
+    ['Imágenes guardadas', _formatBytes(lsBytes * 0.5)],
+  ].map(([name, size]) => `
+    <div class="storage-item">
+      <span>${name}</span><small>${size}</small>
+    </div>
+  `).join('');
+  const cSizeTxt = document.getElementById('cache-size-txt');
+  if (cSizeTxt) cSizeTxt.textContent = _formatBytes(cacheBytes);
+}
+
+function clearCache() {
+  showConfirm(
+    'Limpiar caché',
+    '¿Limpiar el caché de la app? No perderás tu sesión ni tus datos personales.',
+    () => {
+      try {
+        const keep = ['qhh_token','qhh_refresh','qhh_user','qhh_prefs','qhh_province'];
+        const saved = {};
+        keep.forEach(k => { try { saved[k] = localStorage.getItem(k); } catch(e){} });
+        localStorage.clear();
+        keep.forEach(k => { if (saved[k]) localStorage.setItem(k, saved[k]); });
+        if ('caches' in window) caches.keys().then(ks => ks.forEach(k => caches.delete(k)));
+      } catch(e) {}
+      Toast.success('Caché limpiado ✓');
+      loadStorageInfo();
+    },
+    false // not danger
+  );
+}
+
+/* ─── Accessibility ─── */
+function loadA11yData() {
+  _sync('large-text-tog','largeText',false);
+  _sync('high-contrast-tog','highContrast',false);
+  _sync('a11y-reduce-motion-tog','reduceMotion',false);
+  _sync('captions-tog','autoCaptions',false);
+  _sync('screen-reader-tog','screenReader',false);
+}
+
+function setLargeText(enabled) {
+  Prefs.set('largeText', enabled);
+  document.documentElement.style.setProperty('--text-base', enabled ? '1.05rem' : '1rem');
+}
+
+function setHighContrast(enabled) {
+  Prefs.set('highContrast', enabled);
+  document.documentElement.setAttribute('data-high-contrast', enabled ? 'true' : '');
+  if (enabled) {
+    document.documentElement.style.setProperty('--gris','#d1d5db');
+    document.documentElement.style.setProperty('--gris2','#9ca3af');
+  } else {
+    document.documentElement.style.removeProperty('--gris');
+    document.documentElement.style.removeProperty('--gris2');
+  }
+}
+
+/* ─── Connected apps ─── */
+async function loadConnectedApps() {
+  const list = document.getElementById('connected-apps-list');
+  try {
+    const data = await API.request('GET', '/api/users/connected-apps');
+    const apps = data.apps || [];
+    if (!apps.length) { list.innerHTML = '<div style="padding:1rem 1.25rem;color:var(--gris2);font-size:.85rem;">Ninguna aplicación conectada</div>'; return; }
+    list.innerHTML = apps.map(app => `
+      <div class="perm-row">
+        <div class="perm-row-info"><strong>${app.name}</strong><small>${app.permissions?.join(', ') || 'Permisos básicos'}</small></div>
+        <button class="btn-revoke-perm" onclick="revokeApp('${app.id}','${app.name}')">Revocar</button>
+      </div>
+    `).join('');
+  } catch(e) {
+    list.innerHTML = '<div style="padding:1rem 1.25rem;color:var(--gris2);font-size:.85rem;">No se pudieron cargar las apps</div>';
+  }
+}
+
+function requestPermission(type) {
+  const permMap = { camera: 'camera', microphone: 'microphone', geolocation: 'geolocation', notifications: 'notifications' };
+  if (type === 'geolocation') {
+    navigator.geolocation?.getCurrentPosition(() => Toast.success('Permiso de ubicación activo'), () => Toast.warning('Permiso de ubicación no concedido'));
+  } else if (type === 'notifications') {
+    Notification.requestPermission().then(p => Toast[p==='granted'?'success':'warning']('Notificaciones: ' + p));
+  } else {
+    navigator.mediaDevices?.getUserMedia({ [type]: true }).then(s => { s.getTracks().forEach(t=>t.stop()); Toast.success('Permiso de ' + type + ' activo'); }).catch(() => Toast.warning('Permiso de ' + type + ' no concedido'));
+  }
+}
+
+async function revokeApp(appId, appName) {
+  showConfirm('Revocar acceso', `¿Revocar el acceso de "${appName}"? Perderá permiso para acceder a tu cuenta.`, async () => {
+    await API.request('DELETE', '/api/users/connected-apps/' + appId);
+    Toast.success('Acceso revocado');
+    loadConnectedApps();
+  });
+}
+
+/* ─── Help ─── */
+function openFAQ() { window.open('/pages/faq.html','_blank'); }
+function contactSupport() { Toast.info('Redirigiendo a soporte…'); setTimeout(() => window.open('mailto:soporte@quehayhoy.do','_blank'), 500); }
+function openReportBug() { Report.openModal('bug',''); }
+function openExternalLink(type) {
+  const links = { terms: '/legal/terminos.html', privacy: '/legal/privacidad.html', community: '/legal/comunidad.html' };
+  window.open(links[type] || '#','_blank');
+}
+function openPublicationArchive() { window.location.href = '/pages/archivo.html'; }
+function openDrafts() { window.location.href = '/pages/borradores.html'; }
+
+/* ─── Ad management ─── */
+let adExcludes = new Set(JSON.parse(localStorage.getItem('qhh_ad_excludes') || '[]'));
+function toggleAdExclude(btn, category) {
+  if (adExcludes.has(category)) { adExcludes.delete(category); btn.classList.remove('active'); }
+  else { adExcludes.add(category); btn.classList.add('active'); }
+  localStorage.setItem('qhh_ad_excludes', JSON.stringify([...adExcludes]));
+  API.request('PATCH', '/api/users/preferences', { ad_excludes: [...adExcludes] }).catch(()=>{});
+}
+function optOutAllAds() {
+  showConfirm('Excluirte de personalización', 'Se desactivará toda personalización de anuncios. Solo verás anuncios genéricos.', () => {
+    Prefs.set('adPersonalization', false); Prefs.set('adInterests', false); Prefs.set('adDataShare', false);
+    document.getElementById('ad-personalize-tog').checked = false;
+    document.getElementById('ad-interests-tog').checked = false;
+    document.getElementById('ad-data-share-tog').checked = false;
+    Toast.success('Excluido de personalización de anuncios');
+  });
+}
+
+/* ─── Account actions ─── */
+async function doLogout() {
+  showConfirm('Cerrar sesión', '¿Estás seguro de que deseas cerrar sesión?', async () => {
+    try { await API.request('POST', '/api/auth/logout', {}); } catch(e) {}
+    API.auth.clearTokens();
+    window.location.href = '/login.html';
+  }, false);
+}
+
+function switchAccount() { Toast.info('Función de múltiples cuentas próximamente'); }
+function addAccount() { window.location.href = '/login.html?add=true'; }
+
+async function requestDataExport() {
+  try {
+    await API.request('POST', '/api/users/export-data', {});
+    Toast.success('¡Solicitud enviada! Recibirás un email con tus datos en las próximas 24h.');
+  } catch(e) { Toast.error(e.message || 'Error al solicitar datos'); }
+}
+
+function confirmDeactivate() {
+  const extra = document.createElement('div');
+  extra.innerHTML = `<div class="input-row" style="padding:0;margin-bottom:.75rem;"><label>Confirma tu contraseña</label><input type="password" id="deactivate-pwd" placeholder="••••••••" autocomplete="current-password" style="width:100%;background:var(--bg-input);border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:.88rem;padding:.65rem .9rem;font-family:inherit;outline:none;box-sizing:border-box;"/></div>`;
+  showConfirm(
+    'Desactivar cuenta',
+    'Tu cuenta se desactivará temporalmente. Podrás reactivarla iniciando sesión nuevamente.',
+    async () => {
+      const pwd = document.getElementById('deactivate-pwd')?.value;
+      if (!pwd) { Toast.error('Ingresa tu contraseña'); return; }
+      await Account.deactivate(pwd);
+      Toast.success('Cuenta desactivada. Hasta pronto.');
+      setTimeout(() => { API.auth.clearTokens(); window.location.href = '/login.html'; }, 1500);
+    }
+  );
+  setTimeout(() => document.getElementById('confirm-extra').appendChild(extra), 50);
+}
+
+function confirmDelete() {
+  const extra = document.createElement('div');
+  extra.innerHTML = `
+    <div class="input-row" style="padding:0;margin-bottom:.5rem;"><label>Confirma tu contraseña</label><input type="password" id="delete-pwd" placeholder="••••••••" autocomplete="current-password" style="width:100%;background:var(--bg-input);border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:.88rem;padding:.65rem .9rem;font-family:inherit;outline:none;box-sizing:border-box;"/></div>
+    <div class="input-row" style="padding:0;margin-bottom:.75rem;"><label>Motivo (opcional)</label><input type="text" id="delete-reason" placeholder="¿Por qué nos dejas?" style="width:100%;background:var(--bg-input);border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:.88rem;padding:.65rem .9rem;font-family:inherit;outline:none;box-sizing:border-box;"/></div>
+  `;
+  showConfirm(
+    '⚠️ Eliminar cuenta permanentemente',
+    'Se borrarán TODOS tus datos: publicaciones, fotos, mensajes, seguidores. Esta acción es irreversible.',
+    async () => {
+      const pwd = document.getElementById('delete-pwd')?.value;
+      const reason = document.getElementById('delete-reason')?.value;
+      if (!pwd) { Toast.error('Ingresa tu contraseña'); return; }
+      await Account.delete(pwd, reason);
+      Toast.success('Cuenta eliminada. Esperamos volverte a ver.');
+      setTimeout(() => { API.auth.clearTokens(); window.location.href = '/login.html'; }, 2000);
+    }
+  );
+  setTimeout(() => document.getElementById('confirm-extra').appendChild(extra), 50);
+}
+
+/* ─── Confirm dialog engine ─── */
+let _confirmCb = null;
+function showConfirm(title, msg, cb, isDanger=true) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-message').textContent = msg;
+  document.getElementById('confirm-extra').innerHTML = '';
+  const btn = document.getElementById('confirm-action-btn');
+  btn.className = isDanger ? 'btn-danger-c' : 'btn-primary-c';
+  btn.textContent = isDanger ? 'Confirmar' : 'Aceptar';
+  _confirmCb = cb;
+  document.getElementById('confirm-overlay').classList.add('show');
+}
+async function executeConfirmAction() {
+  if (_confirmCb) { await _confirmCb(); }
+  closeConfirm();
+}
+function closeConfirm() {
+  document.getElementById('confirm-overlay').classList.remove('show');
+  _confirmCb = null;
+}
+
+/* ─── Utils ─── */
+function _sync(elId, prefKey, defaultVal=false) {
+  const el = document.getElementById(elId);
+  if (el) el.checked = Prefs.get(prefKey) !== undefined ? !!Prefs.get(prefKey) : defaultVal;
+}
+function _formatMinutes(min) {
+  if (!min) return '0 min';
+  if (min < 60) return min + ' min';
+  return Math.floor(min/60) + 'h ' + (min%60>0?min%60+'min':'');
+}
+function _formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1048576).toFixed(1) + ' MB';
+}
+function _formatDate(iso) {
+  if (!iso) return 'Desconocido';
+  try { return new Date(iso).toLocaleDateString('es-DO', {day:'2-digit',month:'short',year:'numeric'}); } catch(e) { return iso; }
+}
+
+/* ─── Init ─── */
+document.addEventListener('DOMContentLoaded', () => {
+  if (!API.auth.isLoggedIn()) { window.location.href = '/login.html'; return; }
+  // Version
+  const vtxt = document.getElementById('app-version-txt');
+  if (vtxt) vtxt.textContent = 'v4.0.0';
+  // Preload wellbeing sidebar
+  const wbPanel = document.getElementById('panel-bienestar');
+  // Close confirm on overlay click
+  document.getElementById('confirm-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeConfirm(); });
+  // Panel back on swipe right
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX, { passive: true });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (dx > 80) {
+      const open = document.querySelector('.settings-panel.open');
+      if (open) open.classList.remove('open');
+    }
+  }, { passive: true });
+});
+</script>
+</body>
+</html>
