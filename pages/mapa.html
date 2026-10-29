@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,user-scalable=no"/>
+<meta name="theme-color" content="#0A0A0F" id="meta-theme"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>Mapa · QueHayHoy BRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.263.1/font/lucide.css"/>
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<!-- Leaflet Markercluster CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
+<link rel="stylesheet" href="../css/main.css"/>
+<style>
+html,body{height:100%;overflow:hidden;}
+body{overscroll-behavior:none;}
+
+/* Map fills everything */
+#map{position:fixed;inset:0;z-index:0;background:#111118;}
+
+/* Overlay controls */
+.map-header{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  padding:.65rem .85rem;
+  padding-top:calc(.65rem + env(safe-area-inset-top));
+  display:flex;align-items:center;gap:.6rem;
+}
+.map-back-btn{width:38px;height:38px;border-radius:50%;background:rgba(10,10,15,.85);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px);color:var(--texto);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;text-decoration:none;}
+
+.map-search-box{flex:1;display:flex;align-items:center;gap:.5rem;background:rgba(10,10,15,.88);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:.55rem .85rem;backdrop-filter:blur(12px);}
+.map-search-box input{flex:1;background:none;border:none;outline:none;color:var(--texto);font-size:.88rem;font-family:inherit;}
+.map-search-box input::placeholder{color:var(--gris2);}
+
+.map-actions{display:flex;gap:.4rem;}
+.map-action-btn{width:38px;height:38px;border-radius:50%;background:rgba(10,10,15,.85);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px);color:var(--texto);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;}
+.map-action-btn:hover,.map-action-btn.active{background:var(--primary);color:#fff;}
+
+/* Cat filter strip */
+.map-cats{
+  position:fixed;
+  top:calc(60px + env(safe-area-inset-top));
+  left:0;right:0;z-index:200;
+  overflow-x:auto;padding:.5rem .85rem;
+  display:flex;gap:.4rem;scrollbar-width:none;
+}
+.map-cats::-webkit-scrollbar{display:none;}
+.map-cat{flex-shrink:0;padding:.35rem .75rem;border-radius:20px;background:rgba(10,10,15,.85);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);color:var(--gris);font-size:.75rem;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;display:flex;align-items:center;gap:.25rem;}
+.map-cat.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+/* GPS button */
+.gps-btn{
+  position:fixed;right:.85rem;
+  bottom:calc(90px + env(safe-area-inset-bottom));
+  z-index:200;
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(10,10,15,.9);border:1px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(12px);color:var(--texto);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 12px rgba(0,0,0,.4);transition:.2s;
+}
+.gps-btn.tracking{background:var(--primary);color:#fff;}
+.gps-btn.tracking i{animation:gpsAnim .8s ease infinite alternate;}
+@keyframes gpsAnim{to{opacity:.5;transform:scale(1.2);}}
+
+/* Count badge */
+.events-count{
+  position:fixed;left:50%;transform:translateX(-50%);
+  bottom:calc(90px + env(safe-area-inset-bottom));
+  z-index:200;
+  background:rgba(10,10,15,.88);border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(12px);border-radius:20px;
+  padding:.35rem .9rem;font-size:.78rem;font-weight:700;color:var(--texto);
+  pointer-events:none;white-space:nowrap;
+}
+
+/* Bottom nav */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:rgba(10,10,15,.92);backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;padding:0 .5rem;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.6rem .25rem;cursor:pointer;border:none;background:none;color:var(--gris2);font-size:.6rem;font-weight:600;font-family:inherit;transition:.15s;text-decoration:none;}
+.nav-item.active{color:var(--primary);}
+.nav-item i{font-size:1.15rem;}
+.nav-item.active i{filter:drop-shadow(0 0 6px var(--primary));}
+
+/* Event bottom sheet */
+.event-sheet{
+  position:fixed;bottom:0;left:0;right:0;z-index:300;
+  background:var(--bg-card);border-radius:20px 20px 0 0;
+  padding:0 1rem 1rem;
+  padding-bottom:calc(1rem + env(safe-area-inset-bottom));
+  transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);
+  max-height:70vh;overflow-y:auto;
+  border-top:1px solid var(--borde);
+}
+.event-sheet.open{transform:translateY(0);}
+.sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--borde);margin:.75rem auto .85rem;}
+.sheet-close-btn{position:absolute;top:.65rem;right:1rem;background:var(--bg-input);border:none;border-radius:50%;width:30px;height:30px;color:var(--gris);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+.sheet-img{width:100%;height:160px;object-fit:cover;border-radius:14px;background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(236,72,153,.2));display:flex;align-items:center;justify-content:center;font-size:4rem;margin-bottom:.85rem;}
+.sheet-tag{display:inline-block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:.2rem .5rem;border-radius:6px;margin-bottom:.4rem;}
+.sheet-name{font-size:1.1rem;font-weight:800;color:var(--texto);margin-bottom:.5rem;}
+.sheet-meta-row{display:flex;align-items:center;gap:1rem;margin-bottom:.85rem;}
+.sheet-meta{display:flex;align-items:center;gap:.3rem;font-size:.78rem;color:var(--gris2);}
+.sheet-meta i{font-size:.8rem;}
+.sheet-desc{font-size:.85rem;color:var(--gris);line-height:1.6;margin-bottom:1rem;}
+.sheet-actions{display:flex;gap:.6rem;}
+.sheet-btn{flex:1;padding:.75rem;border-radius:12px;border:none;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;}
+.sheet-btn-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;}
+.sheet-btn-secondary{background:var(--bg-input);color:var(--texto);border:1px solid var(--borde);}
+
+/* Cluster override */
+.marker-cluster-small,.marker-cluster-medium,.marker-cluster-large{background:rgba(99,102,241,.15)!important;}
+.marker-cluster-small div,.marker-cluster-medium div,.marker-cluster-large div{background:rgba(99,102,241,.85)!important;color:#fff!important;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.78rem;}
+
+/* Custom map pin */
+.qhh-pin{width:34px;height:34px;border-radius:50%;border:2.5px solid #fff;display:flex;align-items:center;justify-content:center;font-size:1rem;box-shadow:0 2px 10px rgba(0,0,0,.45);cursor:pointer;transition:.15s;}
+.qhh-pin:hover{transform:scale(1.15);}
+.qhh-pin.music{background:linear-gradient(135deg,#6366F1,#8B5CF6);}
+.qhh-pin.food{background:linear-gradient(135deg,#F97316,#EAB308);}
+.qhh-pin.bar{background:linear-gradient(135deg,#EC4899,#F43F5E);}
+.qhh-pin.sport{background:linear-gradient(135deg,#22C55E,#10B981);}
+.qhh-pin.art{background:linear-gradient(135deg,#A855F7,#6366F1);}
+.qhh-pin.festival{background:linear-gradient(135deg,#EAB308,#F97316);}
+.qhh-pin.live{animation:livePulse 1.5s ease infinite;}
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.6)}50%{box-shadow:0 0 0 8px rgba(239,68,68,0)}}
+
+/* Live dot on map */
+.live-dot{position:relative;}
+.live-dot::after{content:'';position:absolute;top:-2px;right:-2px;width:9px;height:9px;background:#EF4444;border-radius:50%;border:1.5px solid #fff;}
+
+/* Leaflet dark override */
+.leaflet-tile{filter:brightness(.85) saturate(.7);}
+[data-theme="light"] .leaflet-tile{filter:none;}
+.leaflet-popup-content-wrapper{background:var(--bg-card);border:1px solid var(--borde);color:var(--texto);border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.leaflet-popup-tip{background:var(--bg-card);}
+.leaflet-popup-content{margin:.75rem;}
+.leaflet-control-zoom a{background:rgba(10,10,15,.85)!important;color:var(--texto)!important;border-color:rgba(255,255,255,.1)!important;backdrop-filter:blur(8px);}
+
+/* Loading overlay */
+.map-loading{position:fixed;inset:0;z-index:500;background:var(--bg-base);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;transition:opacity .4s;}
+.map-loading.hide{opacity:0;pointer-events:none;}
+.map-spinner{width:44px;height:44px;border:3px solid rgba(99,102,241,.2);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.map-loading p{font-size:.88rem;color:var(--gris);}
+
+/* User dot */
+.user-dot{width:16px;height:16px;background:#3B82F6;border-radius:50%;border:2.5px solid #fff;box-shadow:0 0 0 6px rgba(59,130,246,.2);}
+
+/* Toast */
+.toast-wrap{position:fixed;top:calc(70px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:400;pointer-events:none;}
+.toast{background:rgba(10,10,15,.9);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px);border-radius:10px;padding:.6rem 1rem;font-size:.82rem;font-weight:600;color:var(--texto);white-space:nowrap;display:none;}
+.toast.show{display:block;animation:toastIn .25s ease;}
+@keyframes toastIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="map-loading" id="map-loading">
+  <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#6366F1,#EC4899);display:flex;align-items:center;justify-content:center;margin-bottom:.5rem;">
+    <i class="lucide-map" style="font-size:1.6rem;color:#fff;"></i>
+  </div>
+  <div class="map-spinner"></div>
+  <p>Cargando mapa…</p>
+</div>
+
+<!-- Map container -->
+<div id="map"></div>
+
+<!-- Header -->
+<div class="map-header">
+  <a class="map-back-btn" href="home.html"><i class="lucide-arrow-left" style="font-size:1.1rem;"></i></a>
+  <div class="map-search-box">
+    <i class="lucide-search" style="font-size:.95rem;color:var(--gris2);"></i>
+    <input type="text" id="map-search" placeholder="Buscar en el mapa…" oninput="searchOnMap(this.value)" autocomplete="off"/>
+    <button onclick="clearSearch()" id="clear-search-btn" style="display:none;background:none;border:none;color:var(--gris2);cursor:pointer;"><i class="lucide-x" style="font-size:.9rem;"></i></button>
+  </div>
+  <div class="map-actions">
+    <button class="map-action-btn" onclick="toggleFilter()" title="Filtros" id="filter-btn"><i class="lucide-sliders-horizontal" style="font-size:1rem;"></i></button>
+  </div>
+</div>
+
+<!-- Category filter -->
+<div class="map-cats">
+  <button class="map-cat active" data-cat="all" onclick="setCat(this,'all')"><i class="lucide-sparkles"></i> Todo</button>
+  <button class="map-cat" data-cat="live" onclick="setCat(this,'live')"><i class="lucide-radio"></i> En Vivo</button>
+  <button class="map-cat" data-cat="music" onclick="setCat(this,'music')"><i class="lucide-music"></i> Música</button>
+  <button class="map-cat" data-cat="food" onclick="setCat(this,'food')"><i class="lucide-utensils"></i> Comida</button>
+  <button class="map-cat" data-cat="bar" onclick="setCat(this,'bar')"><i class="lucide-cocktail"></i> Bares</button>
+  <button class="map-cat" data-cat="sport" onclick="setCat(this,'sport')"><i class="lucide-trophy"></i> Deporte</button>
+  <button class="map-cat" data-cat="art" onclick="setCat(this,'art')"><i class="lucide-palette"></i> Arte</button>
+  <button class="map-cat" data-cat="festival" onclick="setCat(this,'festival')"><i class="lucide-party-popper"></i> Festival</button>
+</div>
+
+<!-- GPS button -->
+<button class="gps-btn" id="gps-btn" onclick="centerOnUser()" title="Mi ubicación">
+  <i class="lucide-locate" style="font-size:1.1rem;"></i>
+</button>
+
+<!-- Events count -->
+<div class="events-count" id="events-count">Cargando eventos…</div>
+
+<!-- Event bottom sheet -->
+<div class="event-sheet" id="event-sheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close-btn" onclick="closeSheet()"><i class="lucide-x" style="font-size:.85rem;"></i></button>
+  <div class="sheet-img" id="sheet-img"></div>
+  <span class="sheet-tag" id="sheet-tag"></span>
+  <div class="sheet-name" id="sheet-name"></div>
+  <div class="sheet-meta-row">
+    <div class="sheet-meta"><i class="lucide-clock"></i><span id="sheet-time"></span></div>
+    <div class="sheet-meta"><i class="lucide-map-pin"></i><span id="sheet-dist"></span></div>
+    <div class="sheet-meta"><i class="lucide-ticket"></i><span id="sheet-price"></span></div>
+  </div>
+  <div class="sheet-desc" id="sheet-desc"></div>
+  <div class="sheet-actions">
+    <button class="sheet-btn sheet-btn-secondary" onclick="shareEvent()"><i class="lucide-share-2"></i> Compartir</button>
+    <button class="sheet-btn sheet-btn-primary" onclick="goToVenue()">Ver detalle →</button>
+  </div>
+</div>
+
+<!-- Bottom nav -->
+<nav class="bottom-nav">
+  <a class="nav-item" href="home.html"><i class="lucide-home"></i><span style="font-size:.6rem;">Inicio</span></a>
+  <a class="nav-item active"><i class="lucide-map"></i><span style="font-size:.6rem;">Mapa</span></a>
+  <a class="nav-item" href="#" onclick="window.location='publicar.html'"><i class="lucide-plus-circle"></i><span style="font-size:.6rem;">Publicar</span></a>
+  <a class="nav-item" href="feed.html"><i class="lucide-layout-grid"></i><span style="font-size:.6rem;">Explorar</span></a>
+  <a class="nav-item" href="perfil.html"><i class="lucide-user"></i><span style="font-size:.6rem;">Perfil</span></a>
+</nav>
+
+<!-- Toast -->
+<div class="toast-wrap"><div class="toast" id="toast"></div></div>
+
+<!-- Leaflet JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script src="../js/api.js"></script>
+<script>
+/* ── Theme ── */
+(function(){
+  const p=JSON.parse(localStorage.getItem('qhh_prefs')||'{}');
+  const t=p.theme==='auto'?(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):(p.theme||'dark');
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('meta-theme').content=t==='dark'?'#0A0A0F':'#F4F4F8';
+})();
+
+/* ── State ── */
+let map, clusterGroup, userMarker, userCircle;
+let allMarkers = [];
+let activeCategory = 'all';
+let currentEvent = null;
+let watchId = null;
+let userPos = null;
+
+/* ── Province center coords ── */
+const PROVINCE_COORDS = {
+  'La Romana':[18.427,-68.972],'Santo Domingo':[18.486,-69.931],'Distrito Nacional':[18.486,-69.931],
+  'Santiago':[19.452,-70.697],'Puerto Plata':[19.793,-70.688],'La Vega':[19.221,-70.529],
+  'San Pedro de Macorís':[18.455,-69.304],'La Altagracia':[18.620,-68.700],'Barahona':[18.208,-71.100],
+  'San Cristóbal':[18.415,-70.106],'Samaná':[19.206,-69.336],'Peravia':[18.275,-70.334],
+  'Hato Mayor':[18.763,-69.256],'El Seibo':[18.765,-69.040],'San Juan':[18.806,-71.229],
+  'Azua':[18.452,-70.734],'Duarte':[19.302,-70.333],'María Trinidad Sánchez':[19.373,-69.855],
+  'Espaillat':[19.611,-70.275],'Valverde':[19.586,-71.080],'Monte Cristi':[19.862,-71.647],
+  'Dajabón':[19.547,-71.709],'Santiago Rodríguez':[19.479,-71.334],'Pedernales':[17.999,-71.744],
+  'Bahoruco':[18.488,-71.421],'Independencia':[18.534,-71.848],'Elías Piña':[18.879,-71.702],
+  'San José de Ocoa':[18.549,-70.507],'Monte Plata':[18.806,-69.779],'Hermanas Mirabal':[19.375,-70.030],
+  'Monseñor Nouel':[18.923,-70.390],'Sánchez Ramírez':[19.055,-70.148],'Hato Mayor':[18.763,-69.256],
+};
+
+/* ── Mock events (se reemplaza con API real) ── */
+const MOCK_EVENTS = [
+  {id:1,name:'Noche de Merengue en Casa de Campo',cat:'music',emoji:'🎺',lat:18.410,lng:-68.959,price:'RD$500',time:'9:00 PM',dist:'2.1 km',live:true,desc:'La mejor noche de merengue en el Caribe. Artistas en vivo, pista de baile y mucho más.'},
+  {id:2,name:'Festival Gastronómico La Romana',cat:'food',emoji:'🍽️',lat:18.427,lng:-68.972,price:'Gratis',time:'6:00 PM',dist:'0.8 km',live:false,desc:'Los mejores restaurantes de La Romana con degustaciones gratuitas.'},
+  {id:3,name:'Bachata Sensual Open Night',cat:'music',emoji:'💃',lat:18.435,lng:-68.980,price:'RD$300',time:'10:00 PM',dist:'3.5 km',live:false,desc:'Noche de bachata sensual con los mejores DJ de la región.'},
+  {id:4,name:'Torneo de Dominó',cat:'sport',emoji:'🎲',lat:18.420,lng:-68.965,price:'RD$100',time:'7:00 PM',dist:'1.2 km',live:false,desc:'Torneo de dominó con premios en efectivo. Para todos los niveles.'},
+  {id:5,name:'Exposición de Arte Caribeño',cat:'art',emoji:'🖼️',lat:18.432,lng:-68.968,price:'RD$150',time:'5:00 PM',dist:'0.5 km',live:false,desc:'Obras de artistas dominicanos y caribeños. Galería abierta al público.'},
+  {id:6,name:'Carnaval de Agua',cat:'festival',emoji:'🎉',lat:18.415,lng:-68.975,price:'Gratis',time:'4:00 PM',dist:'1.8 km',live:true,desc:'El carnaval de agua más esperado del año. Familia bienvenida.'},
+  {id:7,name:'Cena Romántica Frente al Mar',cat:'food',emoji:'🦞',lat:18.405,lng:-68.950,price:'RD$1,200',time:'8:00 PM',dist:'4.2 km',live:false,desc:'Cena de 4 tiempos con vista al Caribe. Reservación requerida.'},
+  {id:8,name:'Karaoke Night Beach Bar',cat:'bar',emoji:'🎤',lat:18.440,lng:-68.985,price:'RD$200',time:'9:30 PM',dist:'2.8 km',live:false,desc:'Karaoke con más de 5,000 canciones. Tragos 2x1 hasta las 11pm.'},
+];
+
+const CAT_COLORS = {music:'#6366F1',food:'#F97316',bar:'#EC4899',sport:'#22C55E',art:'#A855F7',festival:'#EAB308',live:'#EF4444'};
+const CAT_EMOJIS = {music:'🎵',food:'🍽️',bar:'🍹',sport:'🏆',art:'🎨',festival:'🎉',live:'📍'};
+
+/* ── Init map ── */
+function initMap() {
+  const province = localStorage.getItem('qhh_province') || 'La Romana';
+  const center = PROVINCE_COORDS[province] || [18.427, -68.972];
+
+  /* Esperar que Leaflet esté listo */
+  map = L.map('map', {
+    center,
+    zoom: 13,
+    zoomControl: false,
+    attributionControl: true,
+  });
+
+  /* Tile layer adaptativo */
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const tileUrl = isDark
+    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+    : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+
+  L.tileLayer(tileUrl, {
+    attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 20,
+  }).addTo(map);
+
+  /* Zoom controls posicionados */
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+  /* Cluster group */
+  clusterGroup = L.markerClusterGroup({
+    showCoverageOnHover: false,
+    maxClusterRadius: 50,
+    iconCreateFunction: (cluster) => {
+      const count = cluster.getChildCount();
+      return L.divIcon({
+        html: `<div style="background:rgba(99,102,241,.9);color:#fff;font-weight:800;font-size:.75rem;font-family:'Plus Jakarta Sans',sans-serif;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2.5px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.4);">${count}</div>`,
+        className: '',
+        iconSize: [34, 34],
+        iconAnchor: [17, 17],
+      });
+    },
+  });
+  map.addLayer(clusterGroup);
+
+  /* Click en mapa cierra sheet */
+  map.on('click', closeSheet);
+
+  loadMarkers();
+  tryGetGPS();
+
+  /* Ocultar loading cuando mapa esté listo */
+  map.whenReady(() => {
+    setTimeout(() => {
+      document.getElementById('map-loading').classList.add('hide');
+    }, 500);
+  });
+}
+
+/* ── Markers ── */
+function createPinIcon(ev) {
+  const isLive = ev.live;
+  const color = CAT_COLORS[ev.cat] || '#6366F1';
+  return L.divIcon({
+    html: `<div class="qhh-pin ${ev.cat}${isLive?' live-dot':''}" style="background:${color};">${ev.emoji}</div>`,
+    className: '',
+    iconSize: [34, 34],
+    iconAnchor: [17, 17],
+    popupAnchor: [0, -20],
+  });
+}
+
+function loadMarkers(events = MOCK_EVENTS) {
+  clusterGroup.clearLayers();
+  allMarkers = [];
+
+  const filtered = activeCategory === 'all' ? events
+    : activeCategory === 'live' ? events.filter(e => e.live)
+    : events.filter(e => e.cat === activeCategory);
+
+  filtered.forEach(ev => {
+    const marker = L.marker([ev.lat, ev.lng], { icon: createPinIcon(ev) });
+    marker.on('click', () => openSheet(ev));
+    clusterGroup.addLayer(marker);
+    allMarkers.push({ marker, ev });
+  });
+
+  document.getElementById('events-count').textContent =
+    filtered.length === 0 ? 'Sin eventos aquí'
+    : filtered.length === 1 ? '1 evento'
+    : `${filtered.length} eventos`;
+}
+
+/* ── Event sheet ── */
+function openSheet(ev) {
+  currentEvent = ev;
+  document.getElementById('sheet-img').textContent = ev.emoji;
+  document.getElementById('sheet-img').style.fontSize = '4rem';
+  const tag = document.getElementById('sheet-tag');
+  tag.textContent = ev.cat.toUpperCase();
+  tag.style.background = `${CAT_COLORS[ev.cat] || '#6366F1'}22`;
+  tag.style.color = CAT_COLORS[ev.cat] || '#6366F1';
+  document.getElementById('sheet-name').textContent = ev.name;
+  document.getElementById('sheet-time').textContent = ev.time;
+  document.getElementById('sheet-dist').textContent = ev.dist || '–';
+  document.getElementById('sheet-price').textContent = ev.price;
+  document.getElementById('sheet-desc').textContent = ev.desc || '';
+  document.getElementById('event-sheet').classList.add('open');
+}
+
+function closeSheet() {
+  document.getElementById('event-sheet').classList.remove('open');
+  currentEvent = null;
+}
+
+function goToVenue() {
+  if (currentEvent) window.location.href = `venue.html?id=${currentEvent.id}&type=event`;
+}
+
+function shareEvent() {
+  if (!currentEvent) return;
+  if (navigator.share) {
+    navigator.share({ title: currentEvent.name, url: `${location.origin}/pages/venue.html?id=${currentEvent.id}` }).catch(()=>{});
+  } else {
+    showToast('Enlace copiado');
+  }
+}
+
+/* ── GPS ── */
+function tryGetGPS() {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(pos => {
+    userPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    placeUserDot(userPos.lat, userPos.lng, pos.coords.accuracy);
+  }, () => {}, { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 });
+}
+
+function placeUserDot(lat, lng, accuracy) {
+  if (userMarker) { map.removeLayer(userMarker); map.removeLayer(userCircle); }
+  const userIcon = L.divIcon({
+    html: '<div class="user-dot"></div>',
+    className: '',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+  });
+  userMarker = L.marker([lat, lng], { icon: userIcon, zIndexOffset: 1000 }).addTo(map);
+  userCircle = L.circle([lat, lng], { radius: Math.min(accuracy, 200), color: '#3B82F6', fillColor: '#3B82F6', fillOpacity: .08, weight: 1 }).addTo(map);
+}
+
+function centerOnUser() {
+  const btn = document.getElementById('gps-btn');
+  if (!navigator.geolocation) { showToast('GPS no disponible'); return; }
+  btn.classList.add('tracking');
+  navigator.geolocation.getCurrentPosition(pos => {
+    const lat = pos.coords.latitude, lng = pos.coords.longitude;
+    userPos = { lat, lng };
+    placeUserDot(lat, lng, pos.coords.accuracy);
+    map.flyTo([lat, lng], 15, { duration: 1.2 });
+    /* Watch continuo */
+    if (watchId) navigator.geolocation.clearWatch(watchId);
+    watchId = navigator.geolocation.watchPosition(p => {
+      placeUserDot(p.coords.latitude, p.coords.longitude, p.coords.accuracy);
+    }, null, { enableHighAccuracy: true, maximumAge: 5000 });
+    setTimeout(() => btn.classList.remove('tracking'), 3000);
+  }, () => {
+    btn.classList.remove('tracking');
+    showToast('No se pudo obtener tu ubicación');
+  }, { enableHighAccuracy: true, timeout: 8000 });
+}
+
+/* ── Categories ── */
+function setCat(btn, cat) {
+  activeCategory = cat;
+  document.querySelectorAll('.map-cat').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadMarkers();
+  closeSheet();
+}
+
+/* ── Search ── */
+let searchTimer;
+function searchOnMap(q) {
+  document.getElementById('clear-search-btn').style.display = q ? 'flex' : 'none';
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    if (!q.trim()) { loadMarkers(); return; }
+    const filtered = MOCK_EVENTS.filter(e =>
+      e.name.toLowerCase().includes(q.toLowerCase()) ||
+      e.cat.toLowerCase().includes(q.toLowerCase())
+    );
+    loadMarkers(filtered);
+    if (filtered.length === 1) {
+      map.flyTo([filtered[0].lat, filtered[0].lng], 16);
+      setTimeout(() => openSheet(filtered[0]), 600);
+    }
+  }, 350);
+}
+
+function clearSearch() {
+  document.getElementById('map-search').value = '';
+  document.getElementById('clear-search-btn').style.display = 'none';
+  loadMarkers();
+}
+
+function toggleFilter() {
+  const btn = document.getElementById('filter-btn');
+  btn.classList.toggle('active');
+  showToast('Filtros avanzados próximamente');
+}
+
+/* ── Load from API ── */
+async function loadFromAPI() {
+  try {
+    const province = localStorage.getItem('qhh_province') || 'La Romana';
+    let url = `/api/events?province=${encodeURIComponent(province)}&limit=50`;
+    if (userPos) url += `&lat=${userPos.lat}&lng=${userPos.lng}`;
+    const data = await API.request('GET', url);
+    if (data.events?.length) {
+      const apiEvents = data.events.map(e => ({
+        id: e.id, name: e.name, cat: e.category, emoji: '📍',
+        lat: e.location?.lat, lng: e.location?.lng,
+        price: e.price ? `RD$${e.price}` : 'Gratis',
+        time: e.start_time, dist: e.distance ? `${e.distance.toFixed(1)} km` : '',
+        live: e.status === 'live', desc: e.description,
+      })).filter(e => e.lat && e.lng);
+      if (apiEvents.length) loadMarkers(apiEvents);
+    }
+  } catch {}
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ── Sheet swipe down ── */
+const sheet = document.getElementById('event-sheet');
+let sheetStartY = 0;
+sheet.addEventListener('touchstart', e => { sheetStartY = e.touches[0].clientY; }, { passive: true });
+sheet.addEventListener('touchend', e => {
+  if (e.changedTouches[0].clientY - sheetStartY > 70) closeSheet();
+}, { passive: true });
+
+/* ── Init ── */
+window.addEventListener('load', () => {
+  /* Leaflet necesita que el DOM esté listo y el contenedor tenga dimensiones */
+  requestAnimationFrame(() => {
+    initMap();
+    if (API.auth.isLoggedIn()) loadFromAPI();
+  });
+});
+
+/* Limpiar watch al salir */
+window.addEventListener('unload', () => {
+  if (watchId) navigator.geolocation.clearWatch(watchId);
+});
+</script>
+</body>
+</html>

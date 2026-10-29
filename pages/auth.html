@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<meta name="theme-color" content="#0A0A0F" id="meta-theme"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>Acceder · QueHayHoy BRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.263.1/font/lucide.css"/>
+<link rel="stylesheet" href="../css/main.css"/>
+<style>
+:root{--auth-max:420px;}
+body{min-height:100dvh;display:flex;flex-direction:column;background:var(--bg-base);overscroll-behavior:none;}
+
+/* BG gradient */
+.auth-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.auth-bg::before{content:'';position:absolute;top:-30%;left:-20%;width:70%;height:70%;background:radial-gradient(ellipse,rgba(99,102,241,.18) 0%,transparent 70%);border-radius:50%;}
+.auth-bg::after{content:'';position:absolute;bottom:-20%;right:-20%;width:60%;height:60%;background:radial-gradient(ellipse,rgba(236,72,153,.12) 0%,transparent 70%);border-radius:50%;}
+
+/* Layout */
+.auth-wrap{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem 1.25rem;padding-top:calc(1.5rem + env(safe-area-inset-top));padding-bottom:calc(1.5rem + env(safe-area-inset-bottom));}
+.auth-card{width:100%;max-width:var(--auth-max);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:24px;padding:2rem 1.5rem;backdrop-filter:blur(20px);}
+
+/* Logo */
+.auth-logo{display:flex;flex-direction:column;align-items:center;gap:.75rem;margin-bottom:2rem;}
+.auth-logo-icon{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(99,102,241,.4);}
+.auth-logo-icon i{font-size:1.8rem;color:#fff;}
+.auth-logo-name{font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,#fff,rgba(255,255,255,.7));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.auth-logo-sub{font-size:.78rem;color:var(--gris2);margin-top:-.5rem;}
+
+/* Tabs */
+.auth-tabs{display:flex;background:var(--bg-input);border-radius:12px;padding:4px;margin-bottom:1.75rem;}
+.auth-tab{flex:1;padding:.55rem;border-radius:9px;border:none;background:transparent;color:var(--gris);font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s;}
+.auth-tab.active{background:var(--primary);color:#fff;box-shadow:0 2px 12px rgba(99,102,241,.4);}
+
+/* Form */
+.form-group{margin-bottom:1rem;}
+.form-label{display:block;font-size:.78rem;font-weight:600;color:var(--gris);margin-bottom:.4rem;}
+.input-wrap{position:relative;}
+.input-wrap i{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--gris2);font-size:1rem;pointer-events:none;}
+.input-wrap input{width:100%;background:var(--bg-input);border:1.5px solid var(--borde);border-radius:12px;color:var(--texto);font-size:.9rem;padding:.75rem .9rem .75rem 2.5rem;font-family:inherit;outline:none;transition:.2s;-webkit-appearance:none;}
+.input-wrap input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,.15);}
+.input-wrap input.error{border-color:#EF4444;}
+.input-wrap .eye-btn{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gris2);cursor:pointer;display:flex;align-items:center;padding:.2rem;}
+.field-error{font-size:.72rem;color:#EF4444;margin-top:.3rem;display:none;}
+.field-error.show{display:block;}
+
+/* Phone prefix */
+.phone-wrap{display:flex;gap:.5rem;}
+.phone-prefix{background:var(--bg-input);border:1.5px solid var(--borde);border-radius:12px;color:var(--texto);font-size:.88rem;padding:.75rem .65rem;font-family:inherit;width:90px;flex-shrink:0;-webkit-appearance:none;}
+.phone-prefix:focus{outline:none;border-color:var(--primary);}
+
+/* Password strength */
+.pwd-strength{height:3px;border-radius:2px;background:var(--borde);margin-top:.5rem;overflow:hidden;}
+.pwd-strength-bar{height:100%;border-radius:2px;transition:width .3s,background .3s;width:0;}
+
+/* Submit btn */
+.auth-btn{width:100%;padding:.9rem;border-radius:14px;border:none;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit;margin-top:1.25rem;transition:.2s;position:relative;overflow:hidden;}
+.auth-btn:disabled{opacity:.6;cursor:not-allowed;}
+.auth-btn .spinner{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;}
+.auth-btn.loading .btn-text{display:none;}
+.auth-btn.loading .spinner{display:block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;color:var(--gris2);font-size:.78rem;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--borde);}
+
+/* Social btns */
+.social-btns{display:flex;gap:.6rem;}
+.social-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.7rem;border-radius:12px;border:1.5px solid var(--borde);background:transparent;color:var(--texto);font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s;}
+.social-btn:hover{background:rgba(255,255,255,.05);}
+
+/* Link */
+.auth-link{display:block;text-align:center;font-size:.8rem;color:var(--gris2);margin-top:1rem;cursor:pointer;}
+.auth-link span{color:var(--primary);font-weight:600;}
+
+/* Province selector */
+.province-select{width:100%;background:var(--bg-input);border:1.5px solid var(--borde);border-radius:12px;color:var(--texto);font-size:.88rem;padding:.75rem .9rem;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B8B9E' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.province-select:focus{border-color:var(--primary);}
+
+/* Terms */
+.terms-check{display:flex;align-items:flex-start;gap:.6rem;margin-top:.75rem;}
+.terms-check input[type=checkbox]{width:16px;height:16px;border-radius:4px;accent-color:var(--primary);flex-shrink:0;margin-top:.1rem;}
+.terms-check label{font-size:.75rem;color:var(--gris);line-height:1.5;}
+.terms-check a{color:var(--primary);text-decoration:none;}
+
+/* Forgot */
+.forgot-link{float:right;font-size:.75rem;color:var(--primary);cursor:pointer;font-weight:600;line-height:2;}
+
+/* Forgot form */
+.forgot-wrap{display:none;}
+.forgot-wrap.show{display:block;}
+.back-btn{display:flex;align-items:center;gap:.4rem;background:none;border:none;color:var(--gris);cursor:pointer;font-size:.82rem;font-weight:600;font-family:inherit;margin-bottom:1.25rem;}
+
+/* Toast */
+.toast{position:fixed;top:calc(1rem + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--borde);border-radius:12px;padding:.7rem 1.25rem;font-size:.85rem;font-weight:600;color:var(--texto);z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.4);white-space:nowrap;display:none;align-items:center;gap:.5rem;}
+.toast.show{display:flex;animation:toastIn .25s ease;}
+.toast.success{border-color:rgba(34,197,94,.3);color:#22C55E;}
+.toast.error{border-color:rgba(239,68,68,.3);color:#EF4444;}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* Light theme */
+[data-theme="light"] .auth-card{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.07);}
+[data-theme="light"] .input-wrap input,[data-theme="light"] .phone-prefix,[data-theme="light"] .province-select{background:#F0F0F5;border-color:#E0E0EA;}
+[data-theme="light"] .auth-tabs{background:#E8E8F0;}
+[data-theme="light"] .social-btn{border-color:#D0D0E0;}
+
+/* Tablet/Desktop adaptation */
+@media(min-width:768px){
+  .auth-wrap{padding:2.5rem;}
+  .auth-card{padding:2.5rem 2rem;box-shadow:0 16px 48px rgba(0,0,0,.4);}
+}
+</style>
+</head>
+<body>
+
+<div class="auth-bg"></div>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+
+    <!-- Logo -->
+    <div class="auth-logo">
+      <div class="auth-logo-icon"><i class="lucide-map-pin"></i></div>
+      <div class="auth-logo-name">QueHayHoy BRO</div>
+      <div class="auth-logo-sub">República Dominicana</div>
+    </div>
+
+    <!-- Tabs Login/Register -->
+    <div class="auth-tabs" id="auth-tabs" role="tablist">
+      <button class="auth-tab active" onclick="showTab('login')" id="tab-login">Entrar</button>
+      <button class="auth-tab" onclick="showTab('register')" id="tab-register">Registrarse</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="form-login" onsubmit="doLogin(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <div class="input-wrap">
+          <i class="lucide-mail"></i>
+          <input type="email" id="login-email" placeholder="tu@correo.com" autocomplete="email" inputmode="email" required/>
+        </div>
+        <div class="field-error" id="login-email-err">Correo no válido</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">
+          Contraseña
+          <span class="forgot-link" onclick="showForgot()">¿Olvidaste tu contraseña?</span>
+        </label>
+        <div class="input-wrap">
+          <i class="lucide-lock"></i>
+          <input type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password" required/>
+          <button type="button" class="eye-btn" onclick="toggleEye('login-pwd',this)"><i class="lucide-eye"></i></button>
+        </div>
+        <div class="field-error" id="login-pwd-err">Mínimo 8 caracteres</div>
+      </div>
+      <button type="submit" class="auth-btn" id="login-btn">
+        <span class="btn-text">Entrar</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+
+    <!-- REGISTER FORM -->
+    <form id="form-register" style="display:none;" onsubmit="doRegister(event)" novalidate>
+      <div style="display:flex;gap:.6rem;">
+        <div class="form-group" style="flex:1;">
+          <label class="form-label">Nombre</label>
+          <div class="input-wrap">
+            <i class="lucide-user"></i>
+            <input type="text" id="reg-name" placeholder="Tu nombre" autocomplete="given-name" required/>
+          </div>
+          <div class="field-error" id="reg-name-err">Requerido</div>
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label class="form-label">Apellido</label>
+          <div class="input-wrap">
+            <i class="lucide-user"></i>
+            <input type="text" id="reg-lastname" placeholder="Apellido" autocomplete="family-name"/>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <div class="input-wrap">
+          <i class="lucide-mail"></i>
+          <input type="email" id="reg-email" placeholder="tu@correo.com" autocomplete="email" inputmode="email" required/>
+        </div>
+        <div class="field-error" id="reg-email-err">Correo no válido</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Teléfono (opcional)</label>
+        <div class="phone-wrap">
+          <select class="phone-prefix" id="reg-phone-prefix">
+            <option value="+1">🇩🇴 +1</option>
+            <option value="+1">🇺🇸 +1</option>
+            <option value="+34">🇪🇸 +34</option>
+            <option value="+57">🇨🇴 +57</option>
+            <option value="+58">🇻🇪 +58</option>
+            <option value="+52">🇲🇽 +52</option>
+            <option value="+1">🇵🇷 +1</option>
+          </select>
+          <div class="input-wrap" style="flex:1;">
+            <i class="lucide-phone"></i>
+            <input type="tel" id="reg-phone" placeholder="809-000-0000" autocomplete="tel" inputmode="tel"/>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Provincia</label>
+        <select class="province-select" id="reg-province">
+          <option value="">Selecciona tu provincia</option>
+          <option>Azua</option><option>Bahoruco</option><option>Barahona</option>
+          <option>Dajabón</option><option selected>Distrito Nacional</option><option>Duarte</option>
+          <option>El Seibo</option><option>Elías Piña</option><option>Espaillat</option>
+          <option>Hato Mayor</option><option>Hermanas Mirabal</option><option>Independencia</option>
+          <option>La Altagracia</option><option>La Romana</option><option>La Vega</option>
+          <option>María Trinidad Sánchez</option><option>Monseñor Nouel</option><option>Monte Cristi</option>
+          <option>Monte Plata</option><option>Pedernales</option><option>Peravia</option>
+          <option>Puerto Plata</option><option>Samaná</option><option>Sánchez Ramírez</option>
+          <option>San Cristóbal</option><option>San José de Ocoa</option><option>San Juan</option>
+          <option>San Pedro de Macorís</option><option>Santiago</option><option>Santiago Rodríguez</option>
+          <option>Valverde</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <div class="input-wrap">
+          <i class="lucide-lock"></i>
+          <input type="password" id="reg-pwd" placeholder="Mínimo 8 caracteres" autocomplete="new-password" oninput="checkPwdStrength(this.value)" required/>
+          <button type="button" class="eye-btn" onclick="toggleEye('reg-pwd',this)"><i class="lucide-eye"></i></button>
+        </div>
+        <div class="pwd-strength"><div class="pwd-strength-bar" id="pwd-bar"></div></div>
+        <div class="field-error" id="reg-pwd-err">Mínimo 8 caracteres</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar contraseña</label>
+        <div class="input-wrap">
+          <i class="lucide-shield-check"></i>
+          <input type="password" id="reg-pwd2" placeholder="Repite la contraseña" autocomplete="new-password" required/>
+          <button type="button" class="eye-btn" onclick="toggleEye('reg-pwd2',this)"><i class="lucide-eye"></i></button>
+        </div>
+        <div class="field-error" id="reg-pwd2-err">Las contraseñas no coinciden</div>
+      </div>
+      <div class="terms-check">
+        <input type="checkbox" id="reg-terms" required/>
+        <label for="reg-terms">Acepto los <a href="/terminos.html" target="_blank">Términos de uso</a> y la <a href="/privacidad.html" target="_blank">Política de privacidad</a> de QueHayHoy BRO</label>
+      </div>
+      <button type="submit" class="auth-btn" id="register-btn">
+        <span class="btn-text">Crear cuenta</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+
+    <!-- FORGOT PASSWORD -->
+    <div class="forgot-wrap" id="forgot-wrap">
+      <button class="back-btn" onclick="hideForgot()"><i class="lucide-arrow-left"></i> Volver</button>
+      <div style="text-align:center;margin-bottom:1.25rem;">
+        <div style="font-size:2rem;margin-bottom:.5rem;">🔑</div>
+        <strong style="font-size:1rem;color:var(--texto);">Recuperar contraseña</strong>
+        <p style="font-size:.8rem;color:var(--gris2);margin-top:.3rem;">Te enviaremos un enlace a tu correo.</p>
+      </div>
+      <form onsubmit="doForgot(event)" novalidate>
+        <div class="form-group">
+          <div class="input-wrap">
+            <i class="lucide-mail"></i>
+            <input type="email" id="forgot-email" placeholder="tu@correo.com" inputmode="email" required/>
+          </div>
+        </div>
+        <button type="submit" class="auth-btn" id="forgot-btn">
+          <span class="btn-text">Enviar enlace</span>
+          <div class="spinner"></div>
+        </button>
+      </form>
+    </div>
+
+    <!-- Social / Divider -->
+    <div id="social-section">
+      <div class="divider">o continúa con</div>
+      <div class="social-btns">
+        <button class="social-btn" onclick="socialLogin('google')">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Google
+        </button>
+        <button class="social-btn" onclick="socialLogin('facebook')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          Facebook
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="../js/api.js"></script>
+<script>
+/* ── Theme ── */
+(function(){
+  const p = JSON.parse(localStorage.getItem('qhh_prefs')||'{}');
+  const t = p.theme==='auto'?(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):(p.theme||'dark');
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('meta-theme').content = t==='dark'?'#0A0A0F':'#F4F4F8';
+})();
+
+/* Si ya está logueado, redirigir */
+if (localStorage.getItem('qhh_access_token')) window.location.replace('/pages/home.html');
+
+/* ── Tabs ── */
+let activeTab = 'login';
+function showTab(tab) {
+  activeTab = tab;
+  document.getElementById('form-login').style.display = tab==='login'?'block':'none';
+  document.getElementById('form-register').style.display = tab==='register'?'block':'none';
+  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  document.getElementById('tab-register').classList.toggle('active', tab==='register');
+  document.getElementById('forgot-wrap').classList.remove('show');
+  document.getElementById('auth-tabs').style.display = 'flex';
+}
+
+/* ── Forgot ── */
+function showForgot() {
+  document.getElementById('form-login').style.display = 'none';
+  document.getElementById('auth-tabs').style.display = 'none';
+  document.getElementById('social-section').style.display = 'none';
+  document.getElementById('forgot-wrap').classList.add('show');
+}
+function hideForgot() {
+  document.getElementById('forgot-wrap').classList.remove('show');
+  document.getElementById('auth-tabs').style.display = 'flex';
+  document.getElementById('social-section').style.display = 'block';
+  showTab('login');
+}
+
+/* ── Eye toggle ── */
+function toggleEye(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  const icon = btn.querySelector('i');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    icon.className = 'lucide-eye-off';
+  } else {
+    inp.type = 'password';
+    icon.className = 'lucide-eye';
+  }
+}
+
+/* ── Password strength ── */
+function checkPwdStrength(val) {
+  const bar = document.getElementById('pwd-bar');
+  let score = 0;
+  if (val.length >= 8) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  const pct = (score / 4) * 100;
+  const colors = ['#EF4444','#F97316','#EAB308','#22C55E'];
+  bar.style.width = pct + '%';
+  bar.style.background = colors[score - 1] || 'transparent';
+}
+
+/* ── Toast ── */
+function showToast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show ${type}`;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ── Validation ── */
+function showErr(id, show) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('show', show);
+}
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  btn.classList.toggle('loading', loading);
+}
+
+/* ── Login ── */
+async function doLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
+  const pwd = document.getElementById('login-pwd').value;
+  let valid = true;
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  showErr('login-email-err', !emailOk); if (!emailOk) valid = false;
+  showErr('login-pwd-err', pwd.length < 8); if (pwd.length < 8) valid = false;
+  if (!valid) return;
+  setLoading('login-btn', true);
+  try {
+    const data = await API.auth.login(email, pwd);
+    API.auth.setTokens(data.access_token, data.refresh_token);
+    if (data.user) API.auth.setUser(data.user);
+    if (data.user?.province) localStorage.setItem('qhh_province', data.user.province);
+    showToast('¡Bienvenido! 🎉', 'success');
+    setTimeout(() => window.location.replace('/pages/home.html'), 600);
+  } catch (err) {
+    setLoading('login-btn', false);
+    if (err.status === 401) showToast('Correo o contraseña incorrectos', 'error');
+    else if (err.message === 'TIMEOUT') showToast('Sin conexión. Intenta de nuevo.', 'error');
+    else showToast(err.message || 'Error al iniciar sesión', 'error');
+  }
+}
+
+/* ── Register ── */
+async function doRegister(e) {
+  e.preventDefault();
+  const name = document.getElementById('reg-name').value.trim();
+  const lastname = document.getElementById('reg-lastname').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const prefix = document.getElementById('reg-phone-prefix').value;
+  const province = document.getElementById('reg-province').value;
+  const pwd = document.getElementById('reg-pwd').value;
+  const pwd2 = document.getElementById('reg-pwd2').value;
+  const terms = document.getElementById('reg-terms').checked;
+  let valid = true;
+  showErr('reg-name-err', !name); if (!name) valid = false;
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  showErr('reg-email-err', !emailOk); if (!emailOk) valid = false;
+  showErr('reg-pwd-err', pwd.length < 8); if (pwd.length < 8) valid = false;
+  showErr('reg-pwd2-err', pwd !== pwd2); if (pwd !== pwd2) valid = false;
+  if (!terms) { showToast('Debes aceptar los términos para continuar', 'error'); valid = false; }
+  if (!valid) return;
+  setLoading('register-btn', true);
+  try {
+    const payload = {
+      name: name + (lastname ? ' ' + lastname : ''),
+      email,
+      password: pwd,
+      province: province || undefined,
+      phone: phone ? prefix + phone.replace(/\D/g,'') : undefined,
+    };
+    const data = await API.auth.register(payload);
+    API.auth.setTokens(data.access_token, data.refresh_token);
+    if (data.user) API.auth.setUser(data.user);
+    if (province) localStorage.setItem('qhh_province', province);
+    showToast('¡Cuenta creada! Bienvenido 🎉', 'success');
+    setTimeout(() => window.location.replace('/pages/home.html'), 700);
+  } catch (err) {
+    setLoading('register-btn', false);
+    if (err.status === 409) showToast('Este correo ya está registrado', 'error');
+    else if (err.message === 'TIMEOUT') showToast('Sin conexión. Intenta de nuevo.', 'error');
+    else showToast(err.message || 'Error al crear cuenta', 'error');
+  }
+}
+
+/* ── Forgot ── */
+async function doForgot(e) {
+  e.preventDefault();
+  const email = document.getElementById('forgot-email').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Ingresa un correo válido', 'error'); return;
+  }
+  setLoading('forgot-btn', true);
+  try {
+    await API.auth.forgotPassword(email);
+    showToast('Enlace enviado — revisa tu correo 📧', 'success');
+    setTimeout(hideForgot, 2000);
+  } catch (err) {
+    showToast(err.message || 'Error al enviar correo', 'error');
+  } finally { setLoading('forgot-btn', false); }
+}
+
+/* ── Social login ── */
+function socialLogin(provider) {
+  /* Las keys de OAuth son PENDIENTES de configurar en backend */
+  showToast(`Login con ${provider} próximamente`, 'info');
+}
+
+/* ── Adaptive keyboard ── */
+/* En iOS el teclado empuja el layout — compensar */
+if (/iPhone|iPad/.test(navigator.userAgent)) {
+  const inputs = document.querySelectorAll('input');
+  inputs.forEach(inp => {
+    inp.addEventListener('focus', () => {
+      setTimeout(() => inp.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+    });
+  });
+}
+</script>
+</body>
+</html>

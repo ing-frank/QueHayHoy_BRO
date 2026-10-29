@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<meta name="theme-color" content="#0A0A0F"/>
+<title>Sin conexión · QueHayHoy BRO</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0A0A0F;font-family:'Plus Jakarta Sans',system-ui,sans-serif;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;color:#F8F8FC;}
+.icon{font-size:4rem;margin-bottom:1.5rem;animation:float 3s ease infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+h1{font-size:1.4rem;font-weight:800;margin-bottom:.5rem;}
+p{color:#8B8B9E;font-size:.9rem;line-height:1.6;max-width:280px;margin-bottom:2rem;}
+.btn{background:linear-gradient(135deg,#6366F1,#EC4899);border:none;border-radius:14px;padding:.9rem 2rem;color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.cached{margin-top:1.5rem;font-size:.78rem;color:#6B6B80;}
+[data-theme="light"] body{background:#F4F4F8;color:#1A1A2E;}
+</style>
+</head>
+<body>
+<div class="icon">📡</div>
+<h1>Sin conexión</h1>
+<p>No tienes acceso a Internet en este momento. Algunas secciones siguen disponibles en modo offline.</p>
+<button class="btn" onclick="location.reload()">Intentar de nuevo</button>
+<div class="cached">Puedes revisar los eventos que ya cargaste antes.</div>
+<script>
+(function(){
+  const saved=localStorage.getItem('qhh_prefs');
+  try{const p=JSON.parse(saved||'{}');const t=p.theme==='auto'?(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):(p.theme||'dark');document.documentElement.setAttribute('data-theme',t);}catch{}
+})();
+window.addEventListener('online',()=>window.location.replace('/pages/home.html'));
+</script>
+</body>
+</html>

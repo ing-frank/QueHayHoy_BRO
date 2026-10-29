@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,user-scalable=no"/>
+<meta name="theme-color" content="#0A0A0F" id="meta-theme"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>Perfil · QueHayHoy BRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.263.1/font/lucide.css"/>
+<link rel="stylesheet" href="../css/main.css"/>
+<style>
+html,body{min-height:100%;overflow-x:hidden;}
+
+/* Header */
+.profile-header{
+  padding:.65rem .85rem 0;
+  padding-top:calc(.65rem + env(safe-area-inset-top));
+  display:flex;align-items:center;justify-content:space-between;
+}
+.header-title{font-size:1.05rem;font-weight:800;color:var(--texto);}
+.header-actions{display:flex;gap:.5rem;}
+.header-btn{width:38px;height:38px;border-radius:50%;background:var(--bg-input);border:1px solid var(--borde);color:var(--texto);display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;}
+
+/* Cover + avatar */
+.cover-area{position:relative;height:130px;margin-bottom:52px;}
+.cover-bg{width:100%;height:130px;object-fit:cover;background:linear-gradient(135deg,rgba(99,102,241,.45),rgba(236,72,153,.3));display:block;}
+.cover-edit{position:absolute;top:.6rem;right:.6rem;width:30px;height:30px;border-radius:50%;background:rgba(10,10,15,.7);border:1px solid rgba(255,255,255,.15);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.avatar-wrap{position:absolute;bottom:-44px;left:1rem;width:88px;height:88px;}
+.avatar{width:88px;height:88px;border-radius:50%;border:3.5px solid var(--bg-base);background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;color:#fff;overflow:hidden;position:relative;}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+.avatar-edit{position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:var(--primary);border:2px solid var(--bg-base);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.verified-badge{position:absolute;bottom:0;left:-4px;width:24px;height:24px;background:var(--primary);border-radius:50%;border:2px solid var(--bg-base);display:flex;align-items:center;justify-content:center;}
+
+/* Profile info */
+.profile-info{padding:0 1rem 1rem;}
+.profile-name{font-size:1.2rem;font-weight:800;color:var(--texto);margin-bottom:.15rem;display:flex;align-items:center;gap:.4rem;}
+.profile-username{font-size:.83rem;color:var(--gris);margin-bottom:.6rem;}
+.profile-bio{font-size:.85rem;color:var(--gris2);line-height:1.6;margin-bottom:.75rem;}
+.profile-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem;}
+.profile-tag{font-size:.72rem;font-weight:600;padding:.2rem .6rem;border-radius:20px;background:rgba(99,102,241,.12);color:var(--primary);}
+
+/* Stats */
+.stats-row{display:flex;border-radius:14px;background:var(--bg-input);padding:.85rem;gap:1rem;margin-bottom:1rem;border:1px solid var(--borde);}
+.stat{flex:1;text-align:center;cursor:pointer;}
+.stat-num{font-size:1.35rem;font-weight:800;color:var(--texto);}
+.stat-label{font-size:.68rem;color:var(--gris);font-weight:600;text-transform:uppercase;letter-spacing:.03em;}
+.stat + .stat{border-left:1px solid var(--borde);}
+
+/* Edit profile btn */
+.profile-actions{display:flex;gap:.6rem;margin-bottom:1.15rem;}
+.profile-action-btn{flex:1;padding:.65rem;border-radius:12px;border:1px solid var(--borde);background:var(--bg-input);color:var(--texto);font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:.35rem;transition:.15s;}
+.profile-action-btn:hover{background:var(--bg-card);}
+.profile-action-btn.primary{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+/* Tabs */
+.tabs{display:flex;border-bottom:1px solid var(--borde);margin:0 .85rem 0;}
+.tab{flex:1;padding:.75rem .5rem;font-size:.8rem;font-weight:700;color:var(--gris);cursor:pointer;border:none;background:none;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;justify-content:center;gap:.3rem;transition:.15s;}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+.tab i{font-size:.9rem;}
+
+/* Tab content */
+.tab-pane{display:none;padding:.85rem;}
+.tab-pane.active{display:block;}
+
+/* Posts grid */
+.posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border-radius:12px;overflow:hidden;}
+.post-thumb{aspect-ratio:1;background:linear-gradient(135deg,rgba(99,102,241,.25),rgba(236,72,153,.15));display:flex;align-items:center;justify-content:center;font-size:2rem;cursor:pointer;position:relative;overflow:hidden;}
+.post-thumb:hover::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.3);}
+.post-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.post-thumb-overlay{position:absolute;bottom:.35rem;left:.35rem;display:flex;align-items:center;gap:.25rem;color:#fff;font-size:.65rem;font-weight:700;}
+.post-thumb-overlay i{font-size:.65rem;}
+
+/* Saved list */
+.saved-list{display:flex;flex-direction:column;gap:.65rem;}
+.saved-card{display:flex;align-items:center;gap:.75rem;background:var(--bg-input);border-radius:12px;padding:.75rem;cursor:pointer;border:1px solid var(--borde);text-decoration:none;}
+.saved-thumb{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(236,72,153,.2));display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;}
+.saved-info{flex:1;min-width:0;}
+.saved-name{font-size:.88rem;font-weight:700;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.saved-meta{font-size:.75rem;color:var(--gris);}
+.saved-remove{width:28px;height:28px;border-radius:8px;background:none;border:none;color:var(--gris);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* Friends / Following */
+.friends-list{display:flex;flex-direction:column;gap:.6rem;}
+.friend-card{display:flex;align-items:center;gap:.75rem;}
+.friend-avatar{width:44px;height:44px;border-radius:50%;flex-shrink:0;overflow:hidden;}
+.friend-avatar div{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:#fff;}
+.friend-info{flex:1;}
+.friend-name{font-size:.88rem;font-weight:700;color:var(--texto);}
+.friend-meta{font-size:.75rem;color:var(--gris);}
+.friend-follow-btn{padding:.4rem .9rem;border-radius:20px;border:1px solid var(--primary);background:none;color:var(--primary);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap;}
+.friend-follow-btn.following{background:var(--primary);color:#fff;}
+
+/* Edit modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:500;display:none;}
+.modal-backdrop.open{display:flex;align-items:flex-end;justify-content:center;}
+.edit-modal{background:var(--bg-card);border-radius:20px 20px 0 0;padding:1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom));width:100%;max-width:540px;max-height:85vh;overflow-y:auto;border-top:1px solid var(--borde);}
+.modal-handle{width:36px;height:4px;border-radius:2px;background:var(--borde);margin:0 auto 1rem;}
+.modal-title{font-size:1rem;font-weight:800;color:var(--texto);margin-bottom:1.25rem;text-align:center;}
+.form-group{margin-bottom:1rem;}
+.form-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gris);margin-bottom:.4rem;display:block;}
+.form-input{width:100%;padding:.7rem .85rem;background:var(--bg-input);border:1.5px solid var(--borde);border-radius:12px;color:var(--texto);font-size:.88rem;font-family:inherit;outline:none;transition:.2s;}
+.form-input:focus{border-color:var(--primary);background:rgba(99,102,241,.06);}
+.form-input textarea{resize:none;}
+.form-row{display:flex;gap:.6rem;}
+.form-row .form-group{flex:1;}
+.modal-actions{display:flex;gap:.6rem;margin-top:1.25rem;}
+.modal-btn{flex:1;padding:.8rem;border-radius:12px;border:none;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.modal-btn-cancel{background:var(--bg-input);color:var(--texto);border:1px solid var(--borde);}
+.modal-btn-save{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;}
+
+/* Bottom nav */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(10,10,15,.92);backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding:0 .5rem;padding-bottom:env(safe-area-inset-bottom);}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.6rem .25rem;cursor:pointer;border:none;background:none;color:var(--gris2);font-size:.6rem;font-weight:600;font-family:inherit;transition:.15s;text-decoration:none;}
+.nav-item.active{color:var(--primary);}
+.nav-item i{font-size:1.15rem;}
+.nav-item.active i{filter:drop-shadow(0 0 6px var(--primary));}
+
+/* Content padding bottom for nav */
+.page-content{padding-bottom:calc(70px + env(safe-area-inset-bottom));}
+
+/* Toast */
+.toast{position:fixed;top:calc(60px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:600;background:rgba(10,10,15,.9);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px);border-radius:10px;padding:.6rem 1.1rem;font-size:.82rem;font-weight:600;color:var(--texto);white-space:nowrap;display:none;pointer-events:none;}
+.toast.show{display:block;animation:toastIn .25s ease;}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-6px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* Empty state */
+.empty-state{text-align:center;padding:3rem 1.5rem;}
+.empty-icon{font-size:3rem;margin-bottom:.75rem;}
+.empty-title{font-size:.95rem;font-weight:700;color:var(--texto);margin-bottom:.35rem;}
+.empty-text{font-size:.83rem;color:var(--gris);}
+
+/* Tablet / desktop */
+@media(min-width:768px){
+  .page-content{max-width:640px;margin:0 auto;}
+  .tabs{max-width:640px;margin:0 auto;}
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="profile-header">
+  <div class="header-title" id="header-username">@usuario</div>
+  <div class="header-actions">
+    <button class="header-btn" onclick="openMenu()" title="Más opciones"><i class="lucide-more-horizontal" style="font-size:1.05rem;"></i></button>
+    <a class="header-btn" href="ajustes.html" title="Ajustes"><i class="lucide-settings" style="font-size:1.05rem;"></i></a>
+  </div>
+</div>
+
+<!-- Cover + avatar -->
+<div class="cover-area page-content" style="padding:0;margin-bottom:52px;">
+  <div class="cover-bg" id="cover-bg" style="height:130px;"></div>
+  <div class="avatar-wrap">
+    <div class="avatar" id="user-avatar">F</div>
+    <div class="avatar-edit" onclick="openEditModal()">
+      <i class="lucide-camera" style="font-size:.65rem;color:#fff;"></i>
+    </div>
+  </div>
+</div>
+
+<!-- Profile info -->
+<div class="profile-info page-content" style="padding-top:0;max-width:640px;margin:0 auto;">
+  <div class="profile-name">
+    <span id="display-name">Frank Sherivé</span>
+    <i class="lucide-badge-check" style="font-size:1rem;color:var(--primary);" title="Verificado"></i>
+  </div>
+  <div class="profile-username" id="profile-username">@frank_quehayhoy · La Romana</div>
+  <div class="profile-bio" id="profile-bio">Amante de la música dominicana, los eventos y la buena vida. Siempre buscando el próximo plan 🎉</div>
+  <div class="profile-tags" id="profile-tags">
+    <span class="profile-tag">🎵 Música</span>
+    <span class="profile-tag">🍹 Bares</span>
+    <span class="profile-tag">🎉 Festivales</span>
+    <span class="profile-tag">🏖️ Playa</span>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat" onclick="setTab('posts')">
+      <div class="stat-num" id="stat-posts">24</div>
+      <div class="stat-label">Posts</div>
+    </div>
+    <div class="stat" onclick="setTab('following')">
+      <div class="stat-num" id="stat-following">142</div>
+      <div class="stat-label">Siguiendo</div>
+    </div>
+    <div class="stat" onclick="setTab('following')">
+      <div class="stat-num" id="stat-followers">839</div>
+      <div class="stat-label">Seguidores</div>
+    </div>
+    <div class="stat" onclick="setTab('saved')">
+      <div class="stat-num" id="stat-saved">17</div>
+      <div class="stat-label">Guardados</div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="profile-actions">
+    <button class="profile-action-btn primary" onclick="openEditModal()">
+      <i class="lucide-edit-3" style="font-size:.9rem;"></i> Editar perfil
+    </button>
+    <button class="profile-action-btn" onclick="shareProfile()">
+      <i class="lucide-share-2" style="font-size:.9rem;"></i> Compartir
+    </button>
+    <button class="profile-action-btn" style="flex:0;min-width:42px;" onclick="showToast('Estadísticas próximamente')">
+      <i class="lucide-bar-chart-2" style="font-size:.9rem;"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab active" id="tab-posts" onclick="setTab('posts')"><i class="lucide-grid-2x2"></i> Posts</button>
+  <button class="tab" id="tab-saved" onclick="setTab('saved')"><i class="lucide-bookmark"></i> Guardados</button>
+  <button class="tab" id="tab-following" onclick="setTab('following')"><i class="lucide-users"></i> Siguiendo</button>
+</div>
+
+<!-- Posts tab -->
+<div class="tab-pane active page-content" id="pane-posts">
+  <div class="posts-grid" id="posts-grid"></div>
+</div>
+
+<!-- Saved tab -->
+<div class="tab-pane page-content" id="pane-saved">
+  <div class="saved-list" id="saved-list"></div>
+</div>
+
+<!-- Following tab -->
+<div class="tab-pane page-content" id="pane-following">
+  <div class="friends-list" id="friends-list"></div>
+</div>
+
+<!-- Bottom nav -->
+<nav class="bottom-nav">
+  <a class="nav-item" href="home.html"><i class="lucide-home"></i><span style="font-size:.6rem;">Inicio</span></a>
+  <a class="nav-item" href="mapa.html"><i class="lucide-map"></i><span style="font-size:.6rem;">Mapa</span></a>
+  <a class="nav-item" href="#" onclick="window.location='publicar.html'"><i class="lucide-plus-circle"></i><span style="font-size:.6rem;">Publicar</span></a>
+  <a class="nav-item" href="feed.html"><i class="lucide-layout-grid"></i><span style="font-size:.6rem;">Explorar</span></a>
+  <a class="nav-item active"><i class="lucide-user"></i><span style="font-size:.6rem;">Perfil</span></a>
+</nav>
+
+<!-- Edit Profile Modal -->
+<div class="modal-backdrop" id="edit-modal" onclick="closeOnBackdrop(event)">
+  <div class="edit-modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Editar Perfil</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Nombre</label>
+        <input class="form-input" type="text" id="edit-name" placeholder="Tu nombre"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Apellido</label>
+        <input class="form-input" type="text" id="edit-lastname" placeholder="Tu apellido"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Usuario</label>
+      <input class="form-input" type="text" id="edit-username" placeholder="@usuario"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Bio</label>
+      <textarea class="form-input" id="edit-bio" rows="3" placeholder="Cuéntanos sobre ti…" style="resize:none;"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Provincia</label>
+      <select class="form-input" id="edit-province">
+        <option>Azua</option><option>Bahoruco</option><option>Barahona</option><option>Dajabón</option>
+        <option>Distrito Nacional</option><option>Duarte</option><option>El Seibo</option><option>Elías Piña</option>
+        <option>Espaillat</option><option>Hato Mayor</option><option>Hermanas Mirabal</option>
+        <option>Independencia</option><option selected>La Altagracia</option><option>La Romana</option>
+        <option>La Vega</option><option>María Trinidad Sánchez</option><option>Monseñor Nouel</option>
+        <option>Monte Cristi</option><option>Monte Plata</option><option>Pedernales</option>
+        <option>Peravia</option><option>Puerto Plata</option><option>Samaná</option>
+        <option>San Cristóbal</option><option>San José de Ocoa</option><option>San Juan</option>
+        <option>San Pedro de Macorís</option><option>Sánchez Ramírez</option><option>Santiago</option>
+        <option>Santiago Rodríguez</option><option>Santo Domingo</option><option>Valverde</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Intereses (separados por comas)</label>
+      <input class="form-input" type="text" id="edit-interests" placeholder="Música, Bares, Playa…"/>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="closeEditModal()">Cancelar</button>
+      <button class="modal-btn modal-btn-save" onclick="saveProfile()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="../js/api.js"></script>
+<script>
+/* ── Theme ── */
+(function(){
+  const p=JSON.parse(localStorage.getItem('qhh_prefs')||'{}');
+  const t=p.theme==='auto'?(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):(p.theme||'dark');
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('meta-theme').content=t==='dark'?'#0A0A0F':'#F4F4F8';
+})();
+
+/* ── Mock data ── */
+const MOCK_USER = {
+  id: 'me',
+  name: 'Frank',
+  lastname: 'Sherivé',
+  username: 'frank_quehayhoy',
+  bio: 'Amante de la música dominicana, los eventos y la buena vida. Siempre buscando el próximo plan 🎉',
+  province: 'La Romana',
+  interests: ['Música','Bares','Festivales','Playa'],
+  postCount: 24,
+  followingCount: 142,
+  followerCount: 839,
+  savedCount: 17,
+};
+
+const MOCK_POSTS = Array.from({length:9},(_,i)=>({
+  id:i+1,
+  emoji:['🎵','🍹','🎉','💃','🎤','🏖️','🎺','🎊','🍽️'][i],
+  likes:Math.floor(Math.random()*200)+20,
+  comments:Math.floor(Math.random()*40)+2,
+}));
+
+const MOCK_SAVED = [
+  {id:1,name:'Festival Gastronómico La Romana',cat:'Gastronomía',emoji:'🍽️',time:'Hoy 6PM'},
+  {id:2,name:'Beach Club La Romana',cat:'Bar / Lounge',emoji:'🍹',time:'Abierto ahora'},
+  {id:3,name:'Noche de Merengue Casa de Campo',cat:'Música',emoji:'🎺',time:'Sáb 9PM'},
+];
+
+const MOCK_FOLLOWING = [
+  {id:1,name:'María García',username:'maria_rd',initial:'M',followers:1204,isFollowing:true},
+  {id:2,name:'Carlos Rodríguez',username:'carlosrd',initial:'C',followers:876,isFollowing:true},
+  {id:3,name:'Beach Club LR',username:'beachclublr',initial:'B',followers:4500,isFollowing:true},
+  {id:4,name:'Ana Pérez',username:'anaprd',initial:'A',followers:320,isFollowing:false},
+];
+
+let activeTab = 'posts';
+let profileData = { ...MOCK_USER };
+
+/* ── Render profile ── */
+function renderProfile(u) {
+  document.getElementById('display-name').textContent = `${u.name} ${u.lastname}`;
+  document.getElementById('profile-username').textContent = `@${u.username} · ${u.province}`;
+  document.getElementById('header-username').textContent = `@${u.username}`;
+  document.getElementById('profile-bio').textContent = u.bio;
+  document.getElementById('user-avatar').textContent = u.name.charAt(0).toUpperCase();
+  document.getElementById('stat-posts').textContent = u.postCount;
+  document.getElementById('stat-following').textContent = u.followingCount;
+  document.getElementById('stat-followers').textContent = u.followerCount;
+  document.getElementById('stat-saved').textContent = u.savedCount;
+  document.getElementById('profile-tags').innerHTML = (u.interests||[]).map(t=>`<span class="profile-tag">${t}</span>`).join('');
+}
+
+/* ── Render posts ── */
+function renderPosts() {
+  document.getElementById('posts-grid').innerHTML = MOCK_POSTS.map(p=>`
+    <div class="post-thumb" onclick="window.location='venue.html?id=${p.id}&type=event'">
+      ${p.emoji}
+      <div class="post-thumb-overlay"><i class="lucide-heart"></i>${p.likes}</div>
+    </div>`).join('');
+}
+
+/* ── Render saved ── */
+function renderSaved() {
+  const list = document.getElementById('saved-list');
+  if (!MOCK_SAVED.length) {
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon">🔖</div><div class="empty-title">Sin guardados</div><div class="empty-text">Guarda eventos y lugares para verlos aquí</div></div>`;
+    return;
+  }
+  list.innerHTML = MOCK_SAVED.map(s=>`
+    <a class="saved-card" href="venue.html?id=${s.id}&type=event">
+      <div class="saved-thumb">${s.emoji}</div>
+      <div class="saved-info">
+        <div class="saved-name">${s.name}</div>
+        <div class="saved-meta">${s.cat} · ${s.time}</div>
+      </div>
+      <button class="saved-remove" onclick="removeSaved(event,${s.id})" title="Eliminar"><i class="lucide-x" style="font-size:.85rem;"></i></button>
+    </a>`).join('');
+}
+
+/* ── Render following ── */
+function renderFollowing() {
+  document.getElementById('friends-list').innerHTML = MOCK_FOLLOWING.map(f=>`
+    <div class="friend-card">
+      <div class="friend-avatar"><div>${f.initial}</div></div>
+      <div class="friend-info">
+        <div class="friend-name">${f.name}</div>
+        <div class="friend-meta">@${f.username} · ${f.followers.toLocaleString()} seguidores</div>
+      </div>
+      <button class="friend-follow-btn ${f.isFollowing?'following':''}" id="follow-btn-${f.id}" onclick="toggleFollow(${f.id},this)">
+        ${f.isFollowing?'Siguiendo':'Seguir'}
+      </button>
+    </div>`).join('');
+}
+
+/* ── Tabs ── */
+function setTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  document.getElementById(`pane-${tab}`).classList.add('active');
+}
+
+/* ── Follow toggle ── */
+function toggleFollow(id, btn) {
+  const isNow = btn.classList.toggle('following');
+  btn.textContent = isNow ? 'Siguiendo' : 'Seguir';
+  const delta = isNow ? 1 : -1;
+  profileData.followingCount += delta;
+  document.getElementById('stat-following').textContent = profileData.followingCount;
+}
+
+/* ── Remove saved ── */
+function removeSaved(e, id) {
+  e.preventDefault(); e.stopPropagation();
+  const idx = MOCK_SAVED.findIndex(s=>s.id===id);
+  if (idx>-1) MOCK_SAVED.splice(idx,1);
+  profileData.savedCount--;
+  document.getElementById('stat-saved').textContent = profileData.savedCount;
+  renderSaved();
+  showToast('Eliminado de guardados');
+}
+
+/* ── Share profile ── */
+function shareProfile() {
+  const url = `${location.origin}/pages/perfil.html?u=${profileData.username}`;
+  if (navigator.share) navigator.share({ title: profileData.name, url }).catch(()=>{});
+  else { navigator.clipboard?.writeText(url).catch(()=>{}); showToast('Enlace copiado'); }
+}
+
+/* ── Edit modal ── */
+function openEditModal() {
+  const u = profileData;
+  document.getElementById('edit-name').value = u.name;
+  document.getElementById('edit-lastname').value = u.lastname;
+  document.getElementById('edit-username').value = u.username;
+  document.getElementById('edit-bio').value = u.bio;
+  document.getElementById('edit-interests').value = (u.interests||[]).join(', ');
+  const sel = document.getElementById('edit-province');
+  Array.from(sel.options).forEach(o=>{ o.selected = o.value===u.province; });
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+}
+
+function closeOnBackdrop(e) {
+  if (e.target===document.getElementById('edit-modal')) closeEditModal();
+}
+
+async function saveProfile() {
+  const name = document.getElementById('edit-name').value.trim();
+  const lastname = document.getElementById('edit-lastname').value.trim();
+  const username = document.getElementById('edit-username').value.trim().replace('@','');
+  const bio = document.getElementById('edit-bio').value.trim();
+  const province = document.getElementById('edit-province').value;
+  const interests = document.getElementById('edit-interests').value.split(',').map(s=>s.trim()).filter(Boolean);
+
+  if (!name) { showToast('El nombre es requerido'); return; }
+
+  /* Local update */
+  profileData = { ...profileData, name, lastname, username, bio, province, interests };
+  renderProfile(profileData);
+  closeEditModal();
+  showToast('Perfil actualizado');
+
+  /* API call (no-throw) */
+  try {
+    await API.request('PATCH', '/api/users/me', { name, lastname, username, bio, province, interests });
+  } catch {}
+}
+
+/* ── Open menu ── */
+function openMenu() {
+  showToast('Menú de opciones próximamente');
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+/* ── Load from API ── */
+async function loadFromAPI() {
+  try {
+    const data = await API.request('GET','/api/users/me');
+    if (data?.user) {
+      profileData = { ...profileData, ...data.user };
+      renderProfile(profileData);
+    }
+  } catch {}
+}
+
+/* ── Init ── */
+const urlUser = new URLSearchParams(location.search).get('u');
+renderProfile(profileData);
+renderPosts();
+renderSaved();
+renderFollowing();
+
+if (typeof API !== 'undefined' && API.auth.isLoggedIn()) loadFromAPI();
+</script>
+</body>
+</html>

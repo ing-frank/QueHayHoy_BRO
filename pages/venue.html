@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,user-scalable=no"/>
+<meta name="theme-color" content="#0A0A0F" id="meta-theme"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>Detalle · QueHayHoy BRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.263.1/font/lucide.css"/>
+<link rel="stylesheet" href="../css/main.css"/>
+<style>
+html,body{min-height:100%;overflow-x:hidden;}
+
+/* Hero */
+.hero{position:relative;height:280px;background:#111118;overflow:hidden;}
+.hero-media{width:100%;height:100%;object-fit:cover;display:block;}
+.hero-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:6rem;background:linear-gradient(135deg,rgba(99,102,241,.25),rgba(236,72,153,.15));}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,10,15,.1) 0%,transparent 40%,rgba(10,10,15,.85) 100%);}
+
+/* Hero actions */
+.hero-top{position:absolute;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:.65rem .85rem;padding-top:calc(.65rem + env(safe-area-inset-top));}
+.hero-btn{width:38px;height:38px;border-radius:50%;background:rgba(10,10,15,.6);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;}
+.hero-actions{display:flex;gap:.5rem;}
+
+/* Gallery dots */
+.gallery-dots{position:absolute;bottom:.75rem;left:50%;transform:translateX(-50%);display:flex;gap:.35rem;z-index:10;}
+.gdot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.4);}
+.gdot.active{background:#fff;width:14px;border-radius:3px;}
+
+/* Content */
+.content{padding:1.25rem .85rem 2rem;padding-bottom:calc(5rem + env(safe-area-inset-bottom));}
+
+/* Live badge */
+.live-badge{display:inline-flex;align-items:center;gap:.3rem;background:#EF4444;border-radius:6px;padding:.2rem .55rem;font-size:.7rem;font-weight:800;color:#fff;letter-spacing:.05em;margin-bottom:.6rem;}
+.live-badge i{font-size:.65rem;animation:blink .8s ease infinite alternate;}
+@keyframes blink{to{opacity:.4}}
+
+/* Category tag */
+.cat-tag{display:inline-flex;align-items:center;gap:.3rem;border-radius:6px;padding:.2rem .55rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.6rem;}
+
+/* Title */
+.venue-title{font-size:1.35rem;font-weight:800;color:var(--texto);line-height:1.25;margin-bottom:.85rem;}
+
+/* Meta chips */
+.meta-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.1rem;}
+.meta-chip{display:flex;align-items:center;gap:.3rem;background:var(--bg-input);border-radius:8px;padding:.35rem .65rem;font-size:.78rem;color:var(--gris);font-weight:500;}
+.meta-chip i{font-size:.82rem;color:var(--primary);}
+.meta-chip strong{color:var(--texto);}
+
+/* CTA buttons */
+.cta-row{display:flex;gap:.65rem;margin-bottom:1.5rem;}
+.cta-btn{flex:1;padding:.8rem;border-radius:14px;border:none;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:.4rem;transition:.15s;}
+.cta-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;}
+.cta-secondary{background:var(--bg-input);color:var(--texto);border:1px solid var(--borde);}
+.cta-icon{width:42px;height:42px;border-radius:12px;background:var(--bg-input);border:1px solid var(--borde);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--texto);flex-shrink:0;transition:.15s;}
+.cta-icon.saved{background:rgba(236,72,153,.12);border-color:rgba(236,72,153,.4);color:#EC4899;}
+
+/* Section */
+.section{margin-bottom:1.5rem;}
+.section-title{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gris);margin-bottom:.75rem;}
+
+/* Description */
+.venue-desc{font-size:.9rem;color:var(--gris);line-height:1.7;position:relative;}
+.venue-desc.clamped{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+.read-more-btn{background:none;border:none;color:var(--primary);font-size:.85rem;font-weight:600;cursor:pointer;padding:.3rem 0 0;font-family:inherit;display:block;}
+
+/* Schedule */
+.schedule-list{display:flex;flex-direction:column;gap:.5rem;}
+.schedule-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem .75rem;background:var(--bg-input);border-radius:10px;font-size:.83rem;}
+.schedule-day{color:var(--gris);}
+.schedule-time{font-weight:600;color:var(--texto);}
+.schedule-status{font-size:.7rem;font-weight:700;padding:.15rem .4rem;border-radius:5px;}
+.schedule-open{background:rgba(34,197,94,.12);color:#22C55E;}
+.schedule-closed{background:rgba(139,139,158,.1);color:var(--gris);}
+
+/* Reviews */
+.review-avg{display:flex;align-items:center;gap:.85rem;margin-bottom:1rem;}
+.review-num{font-size:2.4rem;font-weight:800;color:var(--texto);}
+.review-stars{display:flex;gap:.1rem;}
+.star-filled{color:#F59E0B;}
+.star-half{color:#F59E0B;}
+.star-empty{color:var(--borde);}
+.review-count{font-size:.78rem;color:var(--gris);}
+.review-bars{flex:1;}
+.bar-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.2rem;}
+.bar-label{font-size:.7rem;color:var(--gris);width:6px;flex-shrink:0;}
+.bar-track{flex:1;height:5px;background:var(--bg-input);border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;background:#F59E0B;border-radius:3px;transition:width .6s ease;}
+
+.reviews-list{display:flex;flex-direction:column;gap:.85rem;}
+.review-card{background:var(--bg-input);border-radius:12px;padding:.85rem;}
+.review-header{display:flex;align-items:center;gap:.65rem;margin-bottom:.5rem;}
+.reviewer-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:#fff;flex-shrink:0;}
+.reviewer-name{font-size:.85rem;font-weight:700;color:var(--texto);}
+.review-date{font-size:.72rem;color:var(--gris);}
+.review-star-row{display:flex;gap:.1rem;margin-bottom:.4rem;}
+.review-star-row i{font-size:.75rem;color:#F59E0B;}
+.review-text{font-size:.83rem;color:var(--gris);line-height:1.6;}
+
+/* Related events */
+.related-scroll{display:flex;gap:.75rem;overflow-x:auto;padding-bottom:.5rem;scrollbar-width:none;}
+.related-scroll::-webkit-scrollbar{display:none;}
+.related-card{flex-shrink:0;width:180px;background:var(--bg-card);border-radius:14px;overflow:hidden;border:1px solid var(--borde);cursor:pointer;text-decoration:none;}
+.related-img{height:90px;object-fit:cover;display:block;width:100%;background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(236,72,153,.2));display:flex;align-items:center;justify-content:center;font-size:2.5rem;}
+.related-info{padding:.6rem;}
+.related-name{font-size:.78rem;font-weight:700;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.related-meta{font-size:.7rem;color:var(--gris);}
+
+/* Map preview */
+.map-preview{height:140px;border-radius:14px;overflow:hidden;background:var(--bg-input);position:relative;cursor:pointer;}
+.map-preview img{width:100%;height:100%;object-fit:cover;}
+.map-preview-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.25);}
+.map-preview-btn{background:rgba(10,10,15,.8);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:.5rem 1rem;color:#fff;font-size:.82rem;font-weight:700;display:flex;align-items:center;gap:.35rem;}
+
+/* Bottom sticky CTA (mobile) */
+.sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(10,10,15,.95);backdrop-filter:blur(16px);border-top:1px solid var(--borde);padding:.85rem .85rem;padding-bottom:calc(.85rem + env(safe-area-inset-bottom));display:none;}
+.sticky-cta.show{display:block;}
+.sticky-inner{display:flex;align-items:center;gap:.65rem;}
+.sticky-price{font-size:1.05rem;font-weight:800;color:var(--texto);}
+.sticky-sub{font-size:.72rem;color:var(--gris);}
+.sticky-btn{flex:1;padding:.8rem;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:none;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;}
+
+/* Toast */
+.toast{position:fixed;top:calc(60px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:400;background:rgba(10,10,15,.9);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px);border-radius:10px;padding:.6rem 1.1rem;font-size:.82rem;font-weight:600;color:var(--texto);white-space:nowrap;display:none;pointer-events:none;}
+.toast.show{display:block;animation:toastIn .25s ease;}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-6px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* Tablet/Desktop */
+@media(min-width:768px){
+  .hero{height:380px;}
+  .content{max-width:720px;margin:0 auto;}
+  .cta-row{max-width:420px;}
+  .sticky-cta{display:none!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero" id="hero">
+  <div class="hero-placeholder" id="hero-placeholder">🎵</div>
+  <div class="hero-overlay"></div>
+  <!-- Top controls -->
+  <div class="hero-top">
+    <a class="hero-btn" href="javascript:history.back()"><i class="lucide-arrow-left" style="font-size:1.1rem;"></i></a>
+    <div class="hero-actions">
+      <button class="hero-btn" onclick="saveVenue()" id="save-btn" title="Guardar"><i class="lucide-bookmark" style="font-size:1rem;" id="save-icon"></i></button>
+      <button class="hero-btn" onclick="shareVenue()" title="Compartir"><i class="lucide-share-2" style="font-size:1rem;"></i></button>
+    </div>
+  </div>
+  <div class="gallery-dots" id="gallery-dots"></div>
+</div>
+
+<!-- Content -->
+<div class="content">
+  <!-- Category + live -->
+  <div id="badges"></div>
+  <h1 class="venue-title" id="venue-title">Cargando…</h1>
+
+  <!-- Meta -->
+  <div class="meta-row" id="meta-row"></div>
+
+  <!-- CTA row -->
+  <div class="cta-row" id="cta-row">
+    <button class="cta-btn cta-primary" id="main-cta" onclick="mainAction()">Ver tickets</button>
+    <button class="cta-btn cta-secondary" onclick="openMaps()"><i class="lucide-map-pin"></i> Cómo llegar</button>
+    <button class="cta-icon" id="save-icon-row" onclick="saveVenue()"><i class="lucide-bookmark" style="font-size:1rem;"></i></button>
+  </div>
+
+  <!-- Description -->
+  <div class="section">
+    <div class="section-title">Descripción</div>
+    <div class="venue-desc clamped" id="venue-desc">Cargando descripción…</div>
+    <button class="read-more-btn" id="read-more-btn" onclick="toggleDesc()">Leer más</button>
+  </div>
+
+  <!-- Schedule -->
+  <div class="section" id="schedule-section">
+    <div class="section-title">Horario</div>
+    <div class="schedule-list" id="schedule-list"></div>
+  </div>
+
+  <!-- Location -->
+  <div class="section">
+    <div class="section-title">Ubicación</div>
+    <div class="map-preview" onclick="openMaps()">
+      <div class="map-preview-overlay">
+        <div class="map-preview-btn"><i class="lucide-map" style="font-size:.9rem;"></i> Abrir en Mapa</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:.4rem;margin-top:.65rem;font-size:.82rem;color:var(--gris);">
+      <i class="lucide-map-pin" style="font-size:.85rem;color:var(--primary);"></i>
+      <span id="venue-address">Cargando dirección…</span>
+    </div>
+  </div>
+
+  <!-- Reviews -->
+  <div class="section" id="reviews-section">
+    <div class="section-title">Opiniones</div>
+    <div class="review-avg">
+      <div>
+        <div class="review-num" id="review-num">4.7</div>
+        <div class="review-stars" id="review-stars"></div>
+        <div class="review-count" id="review-count">128 opiniones</div>
+      </div>
+      <div class="review-bars" id="review-bars"></div>
+    </div>
+    <div class="reviews-list" id="reviews-list"></div>
+    <button style="width:100%;margin-top:.75rem;padding:.7rem;border-radius:12px;background:var(--bg-input);border:1px solid var(--borde);color:var(--gris);font-size:.83rem;font-weight:600;cursor:pointer;font-family:inherit;" onclick="showToast('Todas las opiniones próximamente')">Ver todas las opiniones</button>
+  </div>
+
+  <!-- Related -->
+  <div class="section">
+    <div class="section-title">También te puede interesar</div>
+    <div class="related-scroll" id="related-scroll"></div>
+  </div>
+</div>
+
+<!-- Sticky CTA -->
+<div class="sticky-cta show" id="sticky-cta">
+  <div class="sticky-inner">
+    <div>
+      <div class="sticky-price" id="sticky-price">Gratis</div>
+      <div class="sticky-sub" id="sticky-sub">entrada</div>
+    </div>
+    <button class="sticky-btn" onclick="mainAction()" id="sticky-btn">Ver tickets</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="../js/api.js"></script>
+<script>
+/* ── Theme ── */
+(function(){
+  const p=JSON.parse(localStorage.getItem('qhh_prefs')||'{}');
+  const t=p.theme==='auto'?(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):(p.theme||'dark');
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('meta-theme').content=t==='dark'?'#0A0A0F':'#F4F4F8';
+})();
+
+/* ── URL params ── */
+const params = new URLSearchParams(location.search);
+const entityId = params.get('id');
+const entityType = params.get('type') || 'event'; // event | venue
+
+/* ── Mock data ── */
+const MOCK_DATA = {
+  id: entityId || '1',
+  type: entityType,
+  name: entityType === 'venue' ? 'Beach Club La Romana' : 'Noche de Merengue en Casa de Campo',
+  category: entityType === 'venue' ? 'bar' : 'music',
+  catColor: '#6366F1',
+  catLabel: entityType === 'venue' ? 'Bar / Lounge' : 'Música',
+  emoji: entityType === 'venue' ? '🍹' : '🎺',
+  isLive: false,
+  price: entityType === 'venue' ? 'Consumo mínimo' : 'RD$500',
+  priceLabel: entityType === 'venue' ? 'por persona' : 'entrada general',
+  date: entityType === 'event' ? 'Hoy, 9:00 PM – 2:00 AM' : null,
+  time: '9:00 PM – 2:00 AM',
+  distance: '2.1 km',
+  address: 'Calle Principal #23, La Romana, República Dominicana',
+  lat: 18.420, lng: -68.972,
+  phone: '+1 809-555-0100',
+  website: 'https://quehayhoy.do',
+  desc: 'La mejor noche de merengue en toda la región del Este. Con artistas invitados, una pista de baile al aire libre con vista al mar, barra abierta premium y gastronomía dominicana de primera. Un evento que no te puedes perder. Disfruta de la música, el ambiente y la cultura dominicana en su mejor expresión. Dress code: casual elegante. No se permiten menores de 18 años después de las 10pm.',
+  capacity: '800 personas',
+  rating: 4.7,
+  reviewCount: 128,
+  ratingBreakdown: [5,4,3,2,1].map((n,i)=>({stars:n,count:[74,32,14,6,2][i]})),
+  schedule: [
+    {day:'Lunes',time:'5:00 PM – 12:00 AM',open:false},
+    {day:'Martes',time:'5:00 PM – 12:00 AM',open:false},
+    {day:'Miércoles',time:'5:00 PM – 1:00 AM',open:true},
+    {day:'Jueves',time:'5:00 PM – 2:00 AM',open:true},
+    {day:'Viernes',time:'4:00 PM – 3:00 AM',open:true},
+    {day:'Sábado',time:'4:00 PM – 3:00 AM',open:true},
+    {day:'Domingo',time:'12:00 PM – 11:00 PM',open:true},
+  ],
+  reviews: [
+    {name:'María G.',initial:'M',stars:5,date:'hace 2 días',text:'¡Increíble! La música estuvo épica, el ambiente estaba a tope y el servicio fue excelente. Definitivamente vuelvo el próximo fin de semana.'},
+    {name:'Carlos R.',initial:'C',stars:4,date:'hace 1 semana',text:'Muy buena experiencia. Un poco lleno pero eso es señal de que el lugar es popular. La pista de baile al aire libre es hermosa.'},
+    {name:'Ana P.',initial:'A',stars:5,date:'hace 2 semanas',text:'El mejor ambiente de La Romana. Vine con mis amigos y pasamos una noche espectacular.'},
+  ],
+  related: [
+    {id:2,name:'Festival Gastronómico',cat:'food',emoji:'🍽️',time:'Hoy 6PM',price:'Gratis'},
+    {id:3,name:'Bachata Sensual Night',cat:'music',emoji:'💃',time:'Sáb 10PM',price:'RD$300'},
+    {id:4,name:'Open Bar Jueves',cat:'bar',emoji:'🍹',time:'Jue 9PM',price:'RD$400'},
+  ],
+};
+
+let isSaved = false;
+let descExpanded = false;
+let currentData = null;
+
+/* ── Render ── */
+function render(d) {
+  currentData = d;
+
+  /* Badges */
+  const badges = document.getElementById('badges');
+  let html = '';
+  if (d.isLive) html += `<div class="live-badge" style="margin-right:.5rem;"><i class="lucide-radio"></i> EN VIVO</div>`;
+  html += `<span class="cat-tag" style="background:${d.catColor}22;color:${d.catColor};">${d.catLabel}</span>`;
+  badges.innerHTML = html;
+
+  /* Title */
+  document.getElementById('venue-title').textContent = d.name;
+  document.getElementById('hero-placeholder').textContent = d.emoji;
+  document.title = `${d.name} · QueHayHoy BRO`;
+
+  /* Meta chips */
+  const metaRow = document.getElementById('meta-row');
+  const chips = [];
+  if (d.date) chips.push({icon:'lucide-calendar',text:d.date});
+  else if (d.time) chips.push({icon:'lucide-clock',text:d.time});
+  if (d.distance) chips.push({icon:'lucide-map-pin',text:d.distance});
+  if (d.capacity) chips.push({icon:'lucide-users',text:d.capacity});
+  if (d.phone) chips.push({icon:'lucide-phone',text:d.phone,link:`tel:${d.phone}`});
+  metaRow.innerHTML = chips.map(c=>`
+    <${c.link?`a href="${c.link}"`:'div'} class="meta-chip" style="${c.link?'text-decoration:none;':''}">
+      <i class="${c.icon}"></i><span>${c.text}</span>
+    </${c.link?'a':'div'}>`).join('');
+
+  /* CTA */
+  const mainCta = document.getElementById('main-cta');
+  const stickyCta = document.getElementById('sticky-btn');
+  const ctaLabel = d.type === 'venue' ? 'Reservar mesa' : d.price === 'Gratis' ? 'Confirmar asistencia' : 'Ver tickets';
+  mainCta.innerHTML = `<i class="lucide-ticket"></i> ${ctaLabel}`;
+  stickyCta.textContent = ctaLabel;
+  document.getElementById('sticky-price').textContent = d.price;
+  document.getElementById('sticky-sub').textContent = d.priceLabel;
+
+  /* Description */
+  document.getElementById('venue-desc').textContent = d.desc;
+
+  /* Schedule */
+  const today = new Date().toLocaleDateString('es-DO',{weekday:'long'});
+  const scheduleList = document.getElementById('schedule-list');
+  if (d.schedule?.length) {
+    scheduleList.innerHTML = d.schedule.map(s=>`
+      <div class="schedule-item" style="${s.day.toLowerCase()===today?'border:1px solid var(--primary);background:rgba(99,102,241,.06);':''}">
+        <span class="schedule-day">${s.day}${s.day.toLowerCase()===today?' <strong style="color:var(--primary);">· hoy</strong>':''}</span>
+        <span class="schedule-time">${s.time}</span>
+        <span class="schedule-status ${s.open?'schedule-open':'schedule-closed'}">${s.open?'Abierto':'Cerrado'}</span>
+      </div>`).join('');
+  } else {
+    document.getElementById('schedule-section').style.display='none';
+  }
+
+  /* Address */
+  document.getElementById('venue-address').textContent = d.address;
+
+  /* Rating */
+  document.getElementById('review-num').textContent = d.rating.toFixed(1);
+  document.getElementById('review-count').textContent = `${d.reviewCount} opiniones`;
+  renderStars('review-stars', d.rating, '1rem');
+
+  const barsEl = document.getElementById('review-bars');
+  const total = d.ratingBreakdown.reduce((s,r)=>s+r.count,0);
+  barsEl.innerHTML = d.ratingBreakdown.map(r=>`
+    <div class="bar-row">
+      <span class="bar-label">${r.stars}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(r.count/total*100)}%"></div></div>
+    </div>`).join('');
+
+  /* Reviews */
+  document.getElementById('reviews-list').innerHTML = d.reviews.map(r=>`
+    <div class="review-card">
+      <div class="review-header">
+        <div class="reviewer-avatar">${r.initial}</div>
+        <div>
+          <div class="reviewer-name">${r.name}</div>
+          <div class="review-date">${r.date}</div>
+        </div>
+      </div>
+      <div class="review-star-row">${'<i class="lucide-star"></i>'.repeat(r.stars)}</div>
+      <div class="review-text">${r.text}</div>
+    </div>`).join('');
+
+  /* Related */
+  document.getElementById('related-scroll').innerHTML = d.related.map(r=>`
+    <a class="related-card" href="venue.html?id=${r.id}&type=event">
+      <div class="related-img">${r.emoji}</div>
+      <div class="related-info">
+        <div class="related-name">${r.name}</div>
+        <div class="related-meta">${r.time} · ${r.price}</div>
+      </div>
+    </a>`).join('');
+
+  /* Hide read-more if short */
+  if (d.desc.length < 200) {
+    document.getElementById('venue-desc').classList.remove('clamped');
+    document.getElementById('read-more-btn').style.display='none';
+  }
+
+  /* Check saved */
+  const saved = JSON.parse(localStorage.getItem('qhh_saved_venues')||'[]');
+  isSaved = saved.includes(String(d.id));
+  updateSaveIcon();
+}
+
+/* ── Stars ── */
+function renderStars(containerId, rating, size='0.85rem') {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  let html = '';
+  for (let i=1;i<=5;i++) {
+    if (rating>=i) html+=`<i class="lucide-star star-filled" style="font-size:${size};"></i>`;
+    else if (rating>=i-.5) html+=`<i class="lucide-star star-half" style="font-size:${size};"></i>`;
+    else html+=`<i class="lucide-star star-empty" style="font-size:${size};"></i>`;
+  }
+  el.innerHTML = html;
+}
+
+/* ── Actions ── */
+function mainAction() {
+  if (!currentData) return;
+  if (currentData.price === 'Gratis') showToast('¡Asistencia confirmada!');
+  else window.open(currentData.website||'#','_blank');
+}
+
+function saveVenue() {
+  if (!currentData) return;
+  const saved = JSON.parse(localStorage.getItem('qhh_saved_venues')||'[]');
+  isSaved = !isSaved;
+  if (isSaved) { if (!saved.includes(String(currentData.id))) saved.push(String(currentData.id)); }
+  else { const idx=saved.indexOf(String(currentData.id)); if(idx>-1) saved.splice(idx,1); }
+  localStorage.setItem('qhh_saved_venues',JSON.stringify(saved));
+  updateSaveIcon();
+  showToast(isSaved ? 'Guardado en tus favoritos' : 'Eliminado de favoritos');
+}
+
+function updateSaveIcon() {
+  const saveBtn = document.getElementById('save-btn');
+  const saveRow = document.getElementById('save-icon-row');
+  const icon = isSaved
+    ? '<i class="lucide-bookmark-check" style="font-size:1rem;color:#EC4899;"></i>'
+    : '<i class="lucide-bookmark" style="font-size:1rem;"></i>';
+  if (saveBtn) saveBtn.innerHTML = icon;
+  if (saveRow) { saveRow.innerHTML = icon; saveRow.classList.toggle('saved', isSaved); }
+}
+
+function openMaps() {
+  if (!currentData) return;
+  const url = `https://www.google.com/maps/search/?api=1&query=${currentData.lat},${currentData.lng}`;
+  window.open(url,'_blank');
+}
+
+function shareVenue() {
+  if (!currentData) return;
+  const shareData = { title: currentData.name, url: location.href };
+  if (navigator.share) navigator.share(shareData).catch(()=>{});
+  else { navigator.clipboard?.writeText(location.href).catch(()=>{}); showToast('Enlace copiado'); }
+}
+
+function toggleDesc() {
+  descExpanded = !descExpanded;
+  const el = document.getElementById('venue-desc');
+  const btn = document.getElementById('read-more-btn');
+  el.classList.toggle('clamped', !descExpanded);
+  btn.textContent = descExpanded ? 'Leer menos' : 'Leer más';
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+/* ── Load from API ── */
+async function loadFromAPI() {
+  try {
+    const endpoint = entityType === 'venue' ? `/api/venues/${entityId}` : `/api/events/${entityId}`;
+    const data = await API.request('GET', endpoint);
+    if (data) render({ ...MOCK_DATA, ...data });
+  } catch {}
+}
+
+/* ── Init ── */
+render(MOCK_DATA);
+if (entityId && typeof API !== 'undefined') loadFromAPI();
+</script>
+</body>
+</html>
