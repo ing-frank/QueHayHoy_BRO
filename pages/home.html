@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<meta name="theme-color" content="#0A0A0F"/>
+<title>QueHayHoy BRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.263.1/font/lucide.css"/>
+<link rel="stylesheet" href="../css/main.css"/>
+<style>
+/* ── Home-specific ── */
+:root{--header-h:64px;}
+
+/* Top bar */
+.home-header{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--header-h);background:rgba(10,10,15,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--borde);display:flex;align-items:center;padding:0 1rem;gap:.75rem;}
+.logo-mark{font-size:1.25rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;}
+.header-actions{margin-left:auto;display:flex;align-items:center;gap:.5rem;}
+.icon-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.07);border:none;color:var(--texto);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;}
+.icon-btn:hover{background:rgba(255,255,255,.13);}
+.notif-dot{position:relative;}
+.notif-dot::after{content:'';position:absolute;top:7px;right:7px;width:7px;height:7px;background:var(--secondary);border-radius:50%;border:1.5px solid var(--bg-base);}
+
+/* Province chip */
+.province-chip{display:flex;align-items:center;gap:.35rem;background:rgba(99,102,241,.12);border:1.5px solid rgba(99,102,241,.25);border-radius:20px;padding:.3rem .75rem;cursor:pointer;transition:.15s;white-space:nowrap;}
+.province-chip:hover{background:rgba(99,102,241,.2);}
+.province-chip span{font-size:.78rem;font-weight:700;color:var(--primary);}
+
+/* Search hero */
+.search-hero{padding:calc(var(--header-h) + 1rem) 1rem .5rem;background:linear-gradient(180deg,rgba(99,102,241,.06) 0%,transparent 100%);}
+.search-box{display:flex;align-items:center;gap:.6rem;background:var(--bg-card);border:1.5px solid var(--borde);border-radius:16px;padding:.75rem 1rem;transition:.2s;}
+.search-box:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,.15);}
+.search-box input{flex:1;background:none;border:none;outline:none;color:var(--texto);font-size:.95rem;font-family:inherit;}
+.search-box input::placeholder{color:var(--gris2);}
+.search-box .lucide-search{color:var(--gris2);font-size:1.1rem;}
+.btn-search-ai{background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;border-radius:10px;padding:.45rem .75rem;color:#fff;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;}
+
+/* Category pills */
+.cats-scroll{overflow-x:auto;padding:.75rem 1rem .25rem;display:flex;gap:.5rem;scrollbar-width:none;}
+.cats-scroll::-webkit-scrollbar{display:none;}
+.cat-pill{flex-shrink:0;padding:.4rem .9rem;border-radius:20px;border:1.5px solid var(--borde);background:transparent;color:var(--gris);font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s;display:flex;align-items:center;gap:.35rem;}
+.cat-pill.active,.cat-pill:hover{border-color:var(--primary);background:rgba(99,102,241,.12);color:var(--primary);}
+.cat-pill i{font-size:.85rem;}
+
+/* Section header */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1rem .5rem;}
+.section-hdr h2{font-size:.95rem;font-weight:800;color:var(--texto);}
+.see-all{font-size:.78rem;font-weight:600;color:var(--primary);background:none;border:none;cursor:pointer;font-family:inherit;}
+
+/* Story strip */
+.stories-strip{overflow-x:auto;padding:.25rem 1rem .75rem;display:flex;gap:.75rem;scrollbar-width:none;}
+.stories-strip::-webkit-scrollbar{display:none;}
+.story-item{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:.4rem;cursor:pointer;}
+.story-ring{width:62px;height:62px;border-radius:50%;padding:2.5px;background:linear-gradient(135deg,var(--primary),var(--secondary));flex-shrink:0;}
+.story-ring.seen{background:var(--borde);}
+.story-inner{width:100%;height:100%;border-radius:50%;background:var(--bg-card);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.4rem;}
+.story-inner img{width:100%;height:100%;object-fit:cover;}
+.story-name{font-size:.68rem;font-weight:600;color:var(--gris);max-width:64px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* Event card */
+.events-scroll{overflow-x:auto;padding:.25rem 1rem .75rem;display:flex;gap:.85rem;scrollbar-width:none;}
+.events-scroll::-webkit-scrollbar{display:none;}
+.ev-card{flex-shrink:0;width:220px;background:var(--bg-card);border:1px solid var(--borde);border-radius:16px;overflow:hidden;cursor:pointer;transition:.15s;}
+.ev-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.ev-img{width:100%;height:120px;object-fit:cover;background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(236,72,153,.3));display:flex;align-items:center;justify-content:center;font-size:2.5rem;}
+.ev-body{padding:.75rem;}
+.ev-tag{display:inline-block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:.2rem .5rem;border-radius:6px;margin-bottom:.4rem;}
+.ev-tag.music{background:rgba(99,102,241,.15);color:#6366F1;}
+.ev-tag.food{background:rgba(249,115,22,.15);color:#F97316;}
+.ev-tag.bar{background:rgba(236,72,153,.15);color:#EC4899;}
+.ev-tag.sport{background:rgba(34,197,94,.15);color:#22C55E;}
+.ev-tag.art{background:rgba(168,85,247,.15);color:#A855F7;}
+.ev-tag.festival{background:rgba(234,179,8,.15);color:#EAB308;}
+.ev-name{font-size:.88rem;font-weight:700;color:var(--texto);margin-bottom:.3rem;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.ev-meta{font-size:.72rem;color:var(--gris2);display:flex;align-items:center;gap:.25rem;}
+.ev-meta i{font-size:.75rem;}
+.ev-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem;}
+.ev-price{font-size:.78rem;font-weight:700;color:var(--primary);}
+.ev-dist{font-size:.72rem;color:var(--gris2);}
+
+/* Venue list card */
+.venue-card{display:flex;align-items:center;gap:.85rem;padding:.85rem 1rem;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:.15s;}
+.venue-card:hover{background:rgba(255,255,255,.03);}
+.venue-thumb{width:56px;height:56px;border-radius:12px;overflow:hidden;flex-shrink:0;background:var(--bg-input);display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
+.venue-thumb img{width:100%;height:100%;object-fit:cover;}
+.venue-info{flex:1;min-width:0;}
+.venue-name{font-size:.9rem;font-weight:700;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.venue-sub{font-size:.75rem;color:var(--gris2);margin-top:.15rem;}
+.venue-rating{display:flex;align-items:center;gap:.2rem;font-size:.75rem;color:#EAB308;font-weight:700;}
+.venue-rating i{font-size:.75rem;}
+.venue-open{font-size:.7rem;font-weight:600;}
+.venue-open.open{color:#22C55E;}
+.venue-open.closed{color:#EF4444;}
+
+/* Feed post */
+.feed-post{background:var(--bg-card);border:1px solid var(--borde);border-radius:16px;margin:.5rem 1rem;overflow:hidden;}
+.post-header{display:flex;align-items:center;gap:.65rem;padding:.75rem;}
+.post-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));padding:2px;flex-shrink:0;}
+.post-avatar-inner{width:100%;height:100%;border-radius:50%;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-size:.9rem;overflow:hidden;}
+.post-avatar-inner img{width:100%;height:100%;object-fit:cover;}
+.post-user{flex:1;min-width:0;}
+.post-user strong{font-size:.85rem;font-weight:700;color:var(--texto);display:block;}
+.post-user small{font-size:.72rem;color:var(--gris2);}
+.post-menu-btn{background:none;border:none;color:var(--gris2);cursor:pointer;font-size:1rem;display:flex;align-items:center;}
+.post-media{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--bg-input);display:flex;align-items:center;justify-content:center;font-size:3rem;}
+.post-media img{width:100%;height:100%;object-fit:cover;}
+.post-actions{display:flex;align-items:center;gap:1rem;padding:.75rem;}
+.post-action-btn{display:flex;align-items:center;gap:.3rem;background:none;border:none;color:var(--gris);cursor:pointer;font-size:.82rem;font-weight:600;font-family:inherit;transition:.15s;}
+.post-action-btn:hover{color:var(--texto);}
+.post-action-btn.liked{color:var(--secondary);}
+.post-action-btn i{font-size:1rem;}
+.post-saves{margin-left:auto;}
+.post-caption{padding:0 .75rem .75rem;font-size:.85rem;color:var(--texto);line-height:1.5;}
+.post-caption strong{color:var(--primary);}
+
+/* Trending hashtags */
+.trend-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem;border-bottom:1px solid rgba(255,255,255,.04);}
+.trend-tag{font-size:.88rem;font-weight:700;color:var(--primary);}
+.trend-count{font-size:.75rem;color:var(--gris2);}
+
+/* Bottom nav */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(10,10,15,.92);backdrop-filter:blur(16px);border-top:1px solid var(--borde);display:flex;align-items:center;padding:0 .5rem;padding-bottom:env(safe-area-inset-bottom);}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.6rem .25rem;cursor:pointer;border:none;background:none;color:var(--gris2);font-size:.6rem;font-weight:600;font-family:inherit;transition:.15s;text-decoration:none;}
+.nav-item.active{color:var(--primary);}
+.nav-item i{font-size:1.15rem;}
+.nav-item .nav-label{font-size:.6rem;}
+.nav-item.active i{filter:drop-shadow(0 0 6px var(--primary));}
+
+/* AI FAB */
+.ai-fab{position:fixed;bottom:calc(70px + env(safe-area-inset-bottom));right:1.1rem;z-index:90;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(99,102,241,.45);transition:.2s;}
+.ai-fab:hover{transform:scale(1.08);}
+.ai-fab i{font-size:1.2rem;color:#fff;}
+
+/* Live badge */
+.live-badge{background:#EF4444;color:#fff;font-size:.6rem;font-weight:800;padding:.1rem .35rem;border-radius:4px;letter-spacing:.04em;}
+
+/* Skeleton */
+.skel{background:linear-gradient(90deg,var(--bg-card) 25%,rgba(255,255,255,.04) 50%,var(--bg-card) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Province modal */
+.province-modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.province-modal.show{opacity:1;pointer-events:all;}
+.province-sheet{background:var(--bg-card);border-radius:20px 20px 0 0;padding:1.25rem;width:100%;max-width:500px;max-height:80vh;overflow-y:auto;}
+.province-sheet h3{font-size:1rem;font-weight:800;margin-bottom:1rem;}
+.province-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;}
+.prov-btn{padding:.65rem .75rem;border-radius:10px;border:1.5px solid var(--borde);background:transparent;color:var(--texto);font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s;text-align:left;display:flex;align-items:center;gap:.4rem;}
+.prov-btn:hover,.prov-btn.active{border-color:var(--primary);background:rgba(99,102,241,.1);color:var(--primary);}
+
+/* AI panel */
+.ai-panel{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.ai-panel.show{opacity:1;pointer-events:all;}
+.ai-sheet{background:var(--bg-card);border-radius:20px 20px 0 0;padding:1.25rem;width:100%;max-width:500px;max-height:75vh;display:flex;flex-direction:column;}
+.ai-messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:.75rem;padding-bottom:.5rem;margin-bottom:.75rem;}
+.ai-msg{max-width:85%;padding:.7rem .9rem;border-radius:14px;font-size:.85rem;line-height:1.5;}
+.ai-msg.user{background:var(--primary);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+.ai-msg.bot{background:var(--bg-input);color:var(--texto);align-self:flex-start;border-bottom-left-radius:4px;}
+.ai-input-row{display:flex;gap:.6rem;}
+.ai-input-row input{flex:1;background:var(--bg-input);border:1.5px solid var(--borde);border-radius:12px;color:var(--texto);font-size:.88rem;padding:.65rem .9rem;font-family:inherit;outline:none;}
+.ai-input-row input:focus{border-color:var(--primary);}
+.ai-send-btn{background:var(--primary);border:none;border-radius:12px;padding:.65rem .9rem;color:#fff;cursor:pointer;display:flex;align-items:center;}
+
+/* Content area */
+.content{padding-bottom:80px;margin-top:0;}
+
+/* Toast */
+.toast-wrap{position:fixed;top:calc(var(--header-h) + .75rem);left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;gap:.5rem;pointer-events:none;width:calc(100% - 2rem);max-width:380px;}
+</style>
+</head>
+<body>
+
+<!-- TOP HEADER -->
+<header class="home-header">
+  <button class="province-chip" onclick="openProvinceModal()" id="province-chip-btn">
+    <i class="lucide-map-pin" style="font-size:.85rem;color:var(--primary);"></i>
+    <span id="province-label">La Romana</span>
+    <i class="lucide-chevron-down" style="font-size:.75rem;color:var(--primary);"></i>
+  </button>
+  <div class="logo-mark">QHH BRO</div>
+  <div class="header-actions">
+    <button class="icon-btn notif-dot" onclick="goTo('notificaciones')" title="Notificaciones"><i class="lucide-bell" style="font-size:1.1rem;"></i></button>
+    <button class="icon-btn" onclick="goTo('perfil')" title="Perfil" id="avatar-btn">
+      <i class="lucide-user" style="font-size:1.1rem;" id="avatar-icon"></i>
+    </button>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+  <!-- SEARCH HERO -->
+  <div class="search-hero">
+    <div class="search-box">
+      <i class="lucide-search"></i>
+      <input type="text" id="main-search" placeholder="¿Qué hay hoy en La Romana?" oninput="onSearch(this.value)" autocomplete="off"/>
+      <button class="btn-search-ai" onclick="openAI('Buscar: ' + document.getElementById('main-search').value)">✦ IA</button>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="cats-scroll" id="cats-scroll">
+    <button class="cat-pill active" data-cat="all" onclick="filterCat(this,'all')"><i class="lucide-sparkles"></i> Todo</button>
+    <button class="cat-pill" data-cat="music" onclick="filterCat(this,'music')"><i class="lucide-music"></i> Música</button>
+    <button class="cat-pill" data-cat="food" onclick="filterCat(this,'food')"><i class="lucide-utensils"></i> Gastronomía</button>
+    <button class="cat-pill" data-cat="bar" onclick="filterCat(this,'bar')"><i class="lucide-cocktail"></i> Bares</button>
+    <button class="cat-pill" data-cat="sport" onclick="filterCat(this,'sport')"><i class="lucide-trophy"></i> Deportes</button>
+    <button class="cat-pill" data-cat="art" onclick="filterCat(this,'art')"><i class="lucide-palette"></i> Arte</button>
+    <button class="cat-pill" data-cat="festival" onclick="filterCat(this,'festival')"><i class="lucide-party-popper"></i> Festivales</button>
+    <button class="cat-pill" data-cat="family" onclick="filterCat(this,'family')"><i class="lucide-baby"></i> Familia</button>
+    <button class="cat-pill" data-cat="beach" onclick="filterCat(this,'beach')"><i class="lucide-umbrella"></i> Playa</button>
+    <button class="cat-pill" data-cat="live" onclick="filterCat(this,'live')"><i class="lucide-radio"></i> En Vivo</button>
+  </div>
+
+  <!-- STORIES -->
+  <div class="section-hdr">
+    <h2>Historias</h2>
+    <button class="see-all" onclick="goTo('historias')">Ver todas</button>
+  </div>
+  <div class="stories-strip" id="stories-strip">
+    <!-- Add story -->
+    <div class="story-item" onclick="addStory()">
+      <div class="story-ring" style="background:var(--borde);">
+        <div class="story-inner" style="background:rgba(99,102,241,.1);">
+          <i class="lucide-plus" style="color:var(--primary);font-size:1.2rem;"></i>
+        </div>
+      </div>
+      <span class="story-name">Tu historia</span>
+    </div>
+    <!-- Dynamic stories injected here -->
+    <div id="stories-container"></div>
+  </div>
+
+  <!-- HAPPENING NOW -->
+  <div class="section-hdr">
+    <h2>🔥 Pasando ahora</h2>
+    <button class="see-all" onclick="goTo('mapa')">Ver mapa</button>
+  </div>
+  <div class="events-scroll" id="events-now"></div>
+
+  <!-- TONIGHT -->
+  <div class="section-hdr">
+    <h2>Esta noche</h2>
+    <button class="see-all" onclick="goTo('eventos')">Ver todo</button>
+  </div>
+  <div class="events-scroll" id="events-tonight"></div>
+
+  <!-- TOP VENUES -->
+  <div class="section-hdr">
+    <h2>Lugares top</h2>
+    <button class="see-all" onclick="goTo('lugares')">Ver todos</button>
+  </div>
+  <div id="venues-list"></div>
+
+  <!-- TRENDING -->
+  <div class="section-hdr">
+    <h2>Tendencias en RD</h2>
+  </div>
+  <div id="trending-list"></div>
+
+  <!-- FEED -->
+  <div class="section-hdr">
+    <h2>Feed</h2>
+    <button class="see-all" onclick="goTo('feed')">Ver todo</button>
+  </div>
+  <div id="feed-container"></div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a class="nav-item active" onclick="scrollTop()">
+    <i class="lucide-home"></i>
+    <span class="nav-label">Inicio</span>
+  </a>
+  <a class="nav-item" href="mapa.html">
+    <i class="lucide-map"></i>
+    <span class="nav-label">Mapa</span>
+  </a>
+  <a class="nav-item" onclick="goTo('publicar')">
+    <i class="lucide-plus-circle"></i>
+    <span class="nav-label">Publicar</span>
+  </a>
+  <a class="nav-item" href="feed.html">
+    <i class="lucide-layout-grid"></i>
+    <span class="nav-label">Explorar</span>
+  </a>
+  <a class="nav-item" href="perfil.html">
+    <i class="lucide-user"></i>
+    <span class="nav-label">Perfil</span>
+  </a>
+</nav>
+
+<!-- AI FAB -->
+<button class="ai-fab" onclick="openAI()" title="Asistente IA">
+  <i class="lucide-bot"></i>
+</button>
+
+<!-- PROVINCE MODAL -->
+<div class="province-modal" id="province-modal" onclick="closeProvinceModal(event)">
+  <div class="province-sheet">
+    <h3>📍 Selecciona tu provincia</h3>
+    <div class="province-grid" id="province-grid"></div>
+    <div style="height:1rem;"></div>
+  </div>
+</div>
+
+<!-- AI PANEL -->
+<div class="ai-panel" id="ai-panel" onclick="closeAIPanel(event)">
+  <div class="ai-sheet" onclick="e=>e.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;">
+      <div style="display:flex;align-items:center;gap:.5rem;">
+        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;">
+          <i class="lucide-bot" style="font-size:.85rem;color:#fff;"></i>
+        </div>
+        <div>
+          <strong style="font-size:.88rem;color:var(--texto);">BRO IA</strong>
+          <small style="font-size:.7rem;color:#22C55E;display:block;">En línea</small>
+        </div>
+      </div>
+      <button onclick="closeAIPanelBtn()" style="background:none;border:none;color:var(--gris2);cursor:pointer;"><i class="lucide-x" style="font-size:1.1rem;"></i></button>
+    </div>
+    <div class="ai-messages" id="ai-messages">
+      <div class="ai-msg bot">¡Hola! 👋 Soy BRO IA. Pregúntame qué hay hoy en tu provincia, busca eventos, lugares o actividades. ¡Estoy aquí para ayudarte!</div>
+    </div>
+    <div class="ai-input-row">
+      <input type="text" id="ai-input" placeholder="¿Qué quieres hacer hoy?" onkeydown="if(event.key==='Enter')sendAIMsg()"/>
+      <button class="ai-send-btn" onclick="sendAIMsg()"><i class="lucide-send" style="font-size:1rem;"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script>
+/* ── Provinces ── */
+const PROVINCES = [
+  {name:'Azua',flag:'🏔️'},{name:'Bahoruco',flag:'🌿'},{name:'Barahona',flag:'🌊'},
+  {name:'Dajabón',flag:'🌾'},{name:'Distrito Nacional',flag:'🏙️'},{name:'Duarte',flag:'🌴'},
+  {name:'El Seibo',flag:'🐄'},{name:'Elías Piña',flag:'⛰️'},{name:'Espaillat',flag:'🌺'},
+  {name:'Hato Mayor',flag:'🐎'},{name:'Hermanas Mirabal',flag:'💜'},{name:'Independencia',flag:'🦅'},
+  {name:'La Altagracia',flag:'🏖️'},{name:'La Romana',flag:'🎭'},{name:'La Vega',flag:'🌄'},
+  {name:'María Trinidad Sánchez',flag:'⚓'},{name:'Monseñor Nouel',flag:'⛪'},{name:'Monte Cristi',flag:'🌵'},
+  {name:'Monte Plata',flag:'🌳'},{name:'Pedernales',flag:'🦩'},{name:'Peravia',flag:'🏞️'},
+  {name:'Puerto Plata',flag:'🌟'},{name:'Samaná',flag:'🐳'},{name:'Sánchez Ramírez',flag:'🌱'},
+  {name:'San Cristóbal',flag:'⚔️'},{name:'San José de Ocoa',flag:'☕'},{name:'San Juan',flag:'🎵'},
+  {name:'San Pedro de Macorís',flag:'⚾'},{name:'Santiago',flag:'🦁'},{name:'Santiago Rodríguez',flag:'🌻'},
+  {name:'Valverde',flag:'🌿'}
+];
+
+let currentProvince = localStorage.getItem('qhh_province') || 'La Romana';
+
+function buildProvinceGrid(){
+  const grid = document.getElementById('province-grid');
+  grid.innerHTML = PROVINCES.map(p=>`
+    <button class="prov-btn${p.name===currentProvince?' active':''}" onclick="selectProvince('${p.name}',this)">
+      ${p.flag} ${p.name}
+    </button>
+  `).join('');
+}
+
+function selectProvince(name, btn){
+  currentProvince = name;
+  localStorage.setItem('qhh_province', name);
+  document.getElementById('province-label').textContent = name;
+  document.getElementById('main-search').placeholder = `¿Qué hay hoy en ${name}?`;
+  document.querySelectorAll('.prov-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  setTimeout(closeProvinceModalDirect, 300);
+  loadContent();
+}
+
+function openProvinceModal(){ buildProvinceGrid(); document.getElementById('province-modal').classList.add('show'); }
+function closeProvinceModal(e){ if(e.target===e.currentTarget) closeProvinceModalDirect(); }
+function closeProvinceModalDirect(){ document.getElementById('province-modal').classList.remove('show'); }
+
+/* ── Nav ── */
+function goTo(page){ window.location.href = page + '.html'; }
+function scrollTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
+
+/* ── Categories ── */
+let activeCategory = 'all';
+function filterCat(btn, cat){
+  activeCategory = cat;
+  document.querySelectorAll('.cat-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  loadContent();
+}
+
+/* ── Search ── */
+let searchDebounce;
+function onSearch(q){
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(()=>{ if(q.trim()) loadContent(q); }, 350);
+}
+
+/* ── Mock data ── */
+const MOCK_STORIES = [
+  {id:1,user:'La Romana Nights',avatar:'🌙',seen:false},
+  {id:2,user:'Food Lovers RD',avatar:'🍽️',seen:false},
+  {id:3,user:'Beach Club',avatar:'🏖️',seen:true},
+  {id:4,user:'Merengue Live',avatar:'🎺',seen:false},
+  {id:5,user:'Arte RD',avatar:'🎨',seen:true},
+];
+
+const MOCK_EVENTS = [
+  {id:1,name:'Noche de Merengue en Casa de Campo',cat:'music',emoji:'🎺',tag:'music',price:'RD$500',dist:'2.1 km',time:'9:00 PM',live:true},
+  {id:2,name:'Festival Gastronómico Dominicano',cat:'food',emoji:'🍽️',tag:'food',price:'Gratis',dist:'0.8 km',time:'6:00 PM',live:false},
+  {id:3,name:'Bachata Sensual Open Night',cat:'music',emoji:'💃',tag:'music',price:'RD$300',dist:'3.5 km',time:'10:00 PM',live:false},
+  {id:4,name:'Torneo de Dominó La Romana',cat:'sport',emoji:'🎲',tag:'sport',price:'RD$100',dist:'1.2 km',time:'7:00 PM',live:false},
+  {id:5,name:'Exposición de Arte Caribeño',cat:'art',emoji:'🖼️',tag:'art',price:'RD$150',dist:'0.5 km',time:'5:00 PM',live:false},
+  {id:6,name:'Carnaval de Agua La Romana',cat:'festival',emoji:'🎉',tag:'festival',price:'Gratis',dist:'1.8 km',time:'4:00 PM',live:true},
+];
+
+const MOCK_VENUES = [
+  {id:1,name:'Casa de Campo Resort',type:'Resort · Club nocturno',emoji:'🏌️',rating:4.9,reviews:1240,open:true,dist:'2.1 km'},
+  {id:2,name:'Restaurante El Pescador',type:'Mariscos · Restaurante',emoji:'🦞',rating:4.7,reviews:856,open:true,dist:'0.9 km'},
+  {id:3,name:'La Romana Beach Club',type:'Playa · Bar',emoji:'🏖️',rating:4.6,reviews:632,open:true,dist:'3.2 km'},
+  {id:4,name:'Calle El Coral',type:'Bar · Música en vivo',emoji:'🎵',rating:4.5,reviews:412,open:false,dist:'1.1 km'},
+];
+
+const MOCK_TRENDING = [
+  {tag:'#LaRomana',count:'12.4K posts'},
+  {tag:'#CarnavalRD',count:'8.9K posts'},
+  {tag:'#MerengueFest',count:'6.2K posts'},
+  {tag:'#CasaDeCampo',count:'4.8K posts'},
+  {tag:'#GastronomíaRD',count:'3.1K posts'},
+];
+
+const MOCK_FEED = [
+  {id:1,user:'Mariela Rodríguez',handle:'@mariela_rd',avatar:'👩',time:'Hace 12 min',emoji:'🎺',caption:'¡La noche de merengue en Casa de Campo está increíble! No se la pierdan 🔥',likes:142,comments:28,saved:false,liked:false},
+  {id:2,user:'Chef Roberto',handle:'@chefroberto',avatar:'👨‍🍳',time:'Hace 34 min',emoji:'🦞',caption:'Nuestro nuevo menú de mariscos ya está disponible. Reserva tu mesa esta noche.',likes:89,comments:15,saved:true,liked:true},
+];
+
+/* ── Render ── */
+function renderEventCard(ev, small=false){
+  return `
+    <div class="ev-card" onclick="viewEvent(${ev.id})" style="${small?'width:180px':''}">
+      <div class="ev-img">${ev.emoji}</div>
+      <div class="ev-body">
+        ${ev.live?'<span class="live-badge">EN VIVO</span> ':''}
+        <span class="ev-tag ${ev.tag}">${ev.cat.toUpperCase()}</span>
+        <div class="ev-name">${ev.name}</div>
+        <div class="ev-meta"><i class="lucide-clock"></i>${ev.time}</div>
+        <div class="ev-footer">
+          <span class="ev-price">${ev.price}</span>
+          <span class="ev-dist"><i class="lucide-map-pin" style="font-size:.65rem;"></i> ${ev.dist}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderVenueCard(v){
+  return `
+    <div class="venue-card" onclick="viewVenue(${v.id})">
+      <div class="venue-thumb">${v.emoji}</div>
+      <div class="venue-info">
+        <div class="venue-name">${v.name}</div>
+        <div class="venue-sub">${v.type} · ${v.dist}</div>
+        <div style="display:flex;align-items:center;gap:.5rem;margin-top:.25rem;">
+          <div class="venue-rating"><i class="lucide-star"></i>${v.rating} <small style="color:var(--gris2);font-weight:400;">(${v.reviews})</small></div>
+          <span class="venue-open ${v.open?'open':'closed'}">${v.open?'Abierto':'Cerrado'}</span>
+        </div>
+      </div>
+      <i class="lucide-chevron-right" style="color:var(--gris2);font-size:.9rem;"></i>
+    </div>
+  `;
+}
+
+function renderPost(p){
+  return `
+    <div class="feed-post" id="post-${p.id}">
+      <div class="post-header">
+        <div class="post-avatar"><div class="post-avatar-inner">${p.avatar}</div></div>
+        <div class="post-user">
+          <strong>${p.user}</strong>
+          <small>${p.handle} · ${p.time}</small>
+        </div>
+        <button class="post-menu-btn"><i class="lucide-more-horizontal"></i></button>
+      </div>
+      <div class="post-media" style="font-size:4rem;">${p.emoji}</div>
+      <div class="post-actions">
+        <button class="post-action-btn${p.liked?' liked':''}" onclick="toggleLike(${p.id},this)">
+          <i class="${p.liked?'lucide-heart':'lucide-heart'}"></i>
+          <span class="like-count">${p.likes}</span>
+        </button>
+        <button class="post-action-btn" onclick="viewEvent(${p.id})">
+          <i class="lucide-message-circle"></i>
+          <span>${p.comments}</span>
+        </button>
+        <button class="post-action-btn" onclick="sharePost(${p.id})">
+          <i class="lucide-send"></i>
+        </button>
+        <button class="post-action-btn post-saves${p.saved?' liked':''}" onclick="toggleSave(${p.id},this)">
+          <i class="${p.saved?'lucide-bookmark-check':'lucide-bookmark'}"></i>
+        </button>
+      </div>
+      <div class="post-caption">${p.caption}</div>
+    </div>
+  `;
+}
+
+function loadContent(query=''){
+  let events = MOCK_EVENTS;
+  if(activeCategory !== 'all') events = events.filter(e=>e.cat===activeCategory);
+  if(query) events = events.filter(e=>e.name.toLowerCase().includes(query.toLowerCase()));
+
+  // Stories
+  document.getElementById('stories-container').innerHTML = MOCK_STORIES.map(s=>`
+    <div class="story-item" onclick="viewStory(${s.id})">
+      <div class="story-ring${s.seen?' seen':''}">
+        <div class="story-inner">${s.avatar}</div>
+      </div>
+      <span class="story-name">${s.user}</span>
+    </div>
+  `).join('');
+
+  // Events now (live first)
+  const live = events.filter(e=>e.live);
+  const notLive = events.filter(e=>!e.live);
+  document.getElementById('events-now').innerHTML = (live.length?live:events.slice(0,3)).map(e=>renderEventCard(e)).join('') || '<div style="padding:1rem;color:var(--gris2);font-size:.85rem;">Sin eventos ahora mismo</div>';
+  document.getElementById('events-tonight').innerHTML = notLive.slice(0,4).map(e=>renderEventCard(e)).join('') || '<div style="padding:1rem;color:var(--gris2);font-size:.85rem;">Cargando eventos…</div>';
+
+  // Venues
+  document.getElementById('venues-list').innerHTML = MOCK_VENUES.map(renderVenueCard).join('');
+
+  // Trending
+  document.getElementById('trending-list').innerHTML = MOCK_TRENDING.map(t=>`
+    <div class="trend-item">
+      <span class="trend-tag">${t.tag}</span>
+      <span class="trend-count">${t.count}</span>
+    </div>
+  `).join('');
+
+  // Feed
+  document.getElementById('feed-container').innerHTML = MOCK_FEED.map(renderPost).join('');
+}
+
+/* ── Load live data from API ── */
+async function loadFromAPI(){
+  try {
+    const prov = encodeURIComponent(currentProvince);
+    const data = await API.request('GET', `/api/events?province=${prov}&limit=10`);
+    if(data.events && data.events.length){
+      const now = data.events.filter(e=>e.status==='live');
+      const tonight = data.events.filter(e=>e.status!=='live');
+      if(now.length) document.getElementById('events-now').innerHTML = now.map(e=>renderEventCard({
+        id:e.id,name:e.name,cat:e.category,emoji:'🎭',tag:e.category,price:e.price?`RD$${e.price}`:'Gratis',dist:e.distance?`${e.distance.toFixed(1)} km`:'',time:e.start_time,live:true
+      })).join('');
+      if(tonight.length) document.getElementById('events-tonight').innerHTML = tonight.slice(0,4).map(e=>renderEventCard({
+        id:e.id,name:e.name,cat:e.category,emoji:'🎭',tag:e.category,price:e.price?`RD$${e.price}`:'Gratis',dist:e.distance?`${e.distance.toFixed(1)} km`:'',time:e.start_time,live:false
+      })).join('');
+    }
+  } catch(e){ /* fallback to mock */ }
+}
+
+/* ── Actions ── */
+function toggleLike(postId, btn){
+  const count = btn.querySelector('.like-count');
+  const liked = btn.classList.toggle('liked');
+  count.textContent = parseInt(count.textContent) + (liked?1:-1);
+  API.request(liked?'POST':'DELETE',`/api/posts/${postId}/like`,{}).catch(()=>{});
+}
+
+function toggleSave(postId, btn){
+  const saved = btn.classList.toggle('liked');
+  const icon = btn.querySelector('i');
+  icon.className = saved ? 'lucide-bookmark-check' : 'lucide-bookmark';
+  API.request(saved?'POST':'DELETE',`/api/posts/${postId}/save`,{}).catch(()=>{});
+}
+
+function viewEvent(id){ window.location.href = `venue.html?id=${id}&type=event`; }
+function viewVenue(id){ window.location.href = `venue.html?id=${id}&type=venue`; }
+function viewStory(id){ window.location.href = `story.html?id=${id}`; }
+function addStory(){ window.location.href = `publicar.html?type=story`; }
+function sharePost(id){
+  if(navigator.share) navigator.share({title:'QueHayHoy BRO',url:window.location.origin+`/venue.html?id=${id}`}).catch(()=>{});
+  else showToast('Enlace copiado','success');
+}
+
+/* ── AI Assistant ── */
+function openAI(seed=''){
+  document.getElementById('ai-panel').classList.add('show');
+  if(seed){ document.getElementById('ai-input').value = seed; document.getElementById('ai-input').focus(); }
+  else document.getElementById('ai-input').focus();
+}
+function closeAIPanel(e){ if(e.target===e.currentTarget) closeAIPanelBtn(); }
+function closeAIPanelBtn(){ document.getElementById('ai-panel').classList.remove('show'); }
+
+async function sendAIMsg(){
+  const input = document.getElementById('ai-input');
+  const q = input.value.trim();
+  if(!q) return;
+  input.value = '';
+  const msgs = document.getElementById('ai-messages');
+  msgs.innerHTML += `<div class="ai-msg user">${q}</div>`;
+  const typing = document.createElement('div');
+  typing.className = 'ai-msg bot';
+  typing.innerHTML = '<i class="lucide-loader-2" style="animation:spin 1s linear infinite;font-size:.9rem;"></i>';
+  msgs.appendChild(typing);
+  msgs.scrollTop = msgs.scrollHeight;
+  try {
+    const resp = await API.request('POST','/api/ai/chat',{
+      message: q,
+      context: { province: currentProvince, category: activeCategory }
+    });
+    typing.innerHTML = resp.reply || 'Lo siento, intenta de nuevo.';
+  } catch(e){
+    // Fallback responses
+    const fallbacks = [
+      `En ${currentProvince} esta noche hay eventos de música en vivo y varios restaurantes abiertos. ¿Te interesa algo en especial?`,
+      `Para ${currentProvince} te recomiendo explorar el mapa de eventos cerca de ti. ¿Prefieres algo de entretenimiento, gastronomía o deportes?`,
+      `¡Hay bastante actividad hoy! Revisa la sección "Pasando ahora" para ver qué eventos están en vivo en ${currentProvince}.`
+    ];
+    typing.innerHTML = fallbacks[Math.floor(Math.random()*fallbacks.length)];
+  }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+/* ── Toast ── */
+function showToast(msg, type='info'){
+  const wrap = document.getElementById('toast-wrap');
+  const t = document.createElement('div');
+  t.style.cssText = `background:${type==='success'?'#22C55E':type==='error'?'#EF4444':'var(--primary)'};color:#fff;padding:.7rem 1rem;border-radius:10px;font-size:.85rem;font-weight:600;text-align:center;pointer-events:all;box-shadow:0 4px 16px rgba(0,0,0,.3);`;
+  t.textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('province-label').textContent = currentProvince;
+  document.getElementById('main-search').placeholder = `¿Qué hay hoy en ${currentProvince}?`;
+  loadContent();
+  // Try live data
+  if(API.auth.isLoggedIn()) loadFromAPI();
+  // Load avatar
+  try {
+    const user = JSON.parse(localStorage.getItem('qhh_user')||'{}');
+    if(user.avatar_url){
+      const ab = document.getElementById('avatar-btn');
+      ab.innerHTML = `<img src="${user.avatar_url}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;"/>`;
+    }
+  } catch(e){}
+});
+</script>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+</body>
+</html>
